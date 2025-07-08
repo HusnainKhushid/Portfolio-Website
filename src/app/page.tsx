@@ -1,103 +1,178 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "@studio-freight/lenis";
+
+export default function HomePage() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const revealRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLHeadingElement>(null);
+
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // --- 1. SETUP ---
+    const video = videoRef.current;
+    const reveal = revealRef.current;
+    const text = textRef.current;
+    if (!reveal || !text) return;
+
+    const lenis = new Lenis();
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+
+    // --- 2. HIGH-PERFORMANCE SETTERS ---
+    const videoYTo = video ? gsap.quickTo(video, "y", { duration: 0.28, ease: "none" }) : () => {};
+    const cursorXTo = gsap.quickTo(reveal, "--cursor-x", { duration: 0.25, ease: "slow(0.1, 0.4, true)" });
+    const cursorYTo = gsap.quickTo(reveal, "--cursor-y", { duration: 0.25, ease: "slow(0.1, 0.4, true)" });
+    const maskScaleTo = gsap.quickTo(reveal, "--mask-scale", { duration: 0.3, ease: 'power2.out' });
+
+    // --- 3. EVENT HANDLERS & ANIMATION LOGIC ---
+    let pointerClientX = 0;
+    let pointerClientY = 0;
+    let hasPointerMoved = false;
+    let currentHoverTarget: Element | null = null; // Track the currently hovered element
+
+    const syncCursorPosition = () => {
+      cursorXTo(pointerClientX + window.scrollX);
+      cursorYTo(pointerClientY + window.scrollY);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      pointerClientX = e.clientX;
+      pointerClientY = e.clientY;
+
+      if (!hasPointerMoved) {
+        hasPointerMoved = true;
+        gsap.set(reveal, { '--cursor-x': pointerClientX + window.scrollX, '--cursor-y': pointerClientY + window.scrollY });
+        gsap.to(reveal, { opacity: 1, duration: 0.3 });
+        maskScaleTo(1); // Animate to default size
+      }
+      
+      const hoverElement = target.closest('[data-mask-size]');
+      if (hoverElement !== currentHoverTarget) {
+        currentHoverTarget = hoverElement;
+        if (hoverElement) {
+          const newSize = parseFloat(hoverElement.getAttribute('data-mask-size') || '100');
+          maskScaleTo(newSize / 100); // Animate to new scale relative to base size of 100px
+        } else {
+          maskScaleTo(1); // Animate back to default scale
+        }
+      }
+
+      syncCursorPosition();
+    };
+
+    // --- 4. ATTACH LISTENERS ---
+    window.addEventListener("mousemove", handleMouseMove);
+    lenis.on('scroll', ScrollTrigger.update);
+    lenis.on("scroll", (e: any) => {
+      syncCursorPosition();
+      if(video) videoYTo(e.scroll * 0.4);
+    });
+
+    // --- New Animation ---
+    const letters = text.querySelectorAll('.letter');
+    gsap.fromTo(letters, {
+      opacity: 0.5
+    }, {
+      opacity: 1,
+      ease: 'power2.out',
+      stagger: {
+        each: 0.02,
+        from: 'start'
+      },
+      scrollTrigger: {
+        trigger: text,
+        start: 'top bottom',
+        end: 'bottom 50%',
+        scrub: 1.5,
+      }
+    });
+
+    // --- 5. CLEANUP ---
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      gsap.ticker.remove(lenis.raf);
+      lenis.destroy();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
+  const aboutText = "Second Section And this will be a About me section wherer i place stuff regarding me";
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <>
+      <div className="main relative">
+        {/* === BACKGROUND CONTENT (Layer 1) === */}
+        <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+            >
+              <source src="/hero.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div className="absolute top-0 left-0 w-full h-full min-h-screen flex flex-col items-center justify-center z-20">
+            <h1 data-mask-size="700" className="text-white text-5xl font-extrabold text-center leading-tight drop-shadow-lg">
+              Making good<br />
+              shit since<br />
+              2019
+            </h1>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <div className="w-full min-h-screen flex items-center justify-center bg-white">
+          <h2 data-mask-size="700" ref={textRef} className="text-3xl font-bold text-gray-800 max-w-4xl text-center">
+            {aboutText.split(' ').map((word, i) => (
+              <span key={i} className="inline-block mr-3">
+                {word.split('').map((char, j) => (
+                  <span key={j} className="letter inline-block">{char}</span>
+                ))}
+              </span>
+            ))}
+          </h2>
+        </div>
+
+        {/* === REVEAL OVERLAY (Layer 2) === */}
+        <div
+          ref={revealRef}
+          className="reveal absolute top-0 left-0 w-full h-full pointer-events-none z-20"
+          style={{
+            opacity: 0, // Start fully transparent
+            maskImage: 'url("/test-mask.svg")',
+            maskRepeat: 'no-repeat',
+            maskSize: 'calc(var(--mask-scale, 0) * 50px)',
+            maskPosition: 'calc(var(--cursor-x, -100) * 1px - var(--mask-scale, 0) * 25px) calc(var(--cursor-y, -100) * 1px - var(--mask-scale, 0) * 25px)',
+            WebkitMaskImage: 'url("/test-mask.svg")',
+            WebkitMaskRepeat: 'no-repeat',
+            WebkitMaskSize: 'calc(var(--mask-scale, 0) * 50px)',
+            WebkitMaskPosition: 'calc(var(--cursor-x, -100) * 1px - var(--mask-scale, 0) * 25px) calc(var(--cursor-y, -100) * 1px - var(--mask-scale, 0) * 25px)',
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          {/* REVEALED SECTION 1 */}
+          <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full min-h-screen flex flex-col items-center justify-center bg-amber-800">
+              <h1 className="text-white text-5xl font-extrabold text-center leading-tight drop-shadow-lg">
+                Making bad<br />
+                shit since<br />
+                2015
+              </h1>
+            </div>
+          </div>
+          {/* REVEALED SECTION 2 */}
+          <div className="w-full min-h-screen flex items-center justify-center bg-black">
+            <h2 className="text-3xl font-bold text-white max-w-4xl text-center">Second Section And this will be a About YOU section wherer i place stuff regarding me</h2>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

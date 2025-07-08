@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Use simple Poppins (regular weight)
+const poppins = Poppins({
+  weight: "400",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -25,9 +22,36 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${poppins.variable} antialiased m-0 p-0 min-h-screen relative`}
       >
-        {children}
+        {/* Header */}
+        <header className="fixed top-0 right-0 h-screen flex flex-col justify-start items-end z-20 p-8 gap-8 pointer-events-none">
+          <nav className="flex flex-col gap-4 pointer-events-auto">
+            <a
+              href="#about"
+              className="text-white text-xl no-underline font-light font-sans"
+              style={{ fontFamily: "var(--font-poppins), sans-serif" }}
+            >
+              About
+            </a>
+            <a
+              href="#work"
+              className="text-white text-xl no-underline font-light font-sans"
+              style={{ fontFamily: "var(--font-poppins), sans-serif" }}
+            >
+              Work
+            </a>
+            <a
+              href="#contact"
+              className="text-white text-xl no-underline font-light font-sans"
+              style={{ fontFamily: "var(--font-poppins), sans-serif" }}
+            >
+              Contact
+            </a>
+          </nav>
+        </header>
+        {/* Main Content */}
+        <main className="relative z-10">{children}</main>
       </body>
     </html>
   );
