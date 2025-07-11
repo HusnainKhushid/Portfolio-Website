@@ -144,15 +144,8 @@ export default function HomePage() {
           </div>
 
           <div className="w-full min-h-screen flex items-center justify-center bg-white">
-            <h2 data-mask-size="700" ref={textRef} className="text-6xl font-bold font-poppins text-gray-800 max-w-[80%] text-center">
-              {aboutText.split(' ').map((word, i) => (
-                <span key={i} className="inline-block mr-3">
-                  {word.split('').map((char, j) => (
-                    <span key={j} className="letter inline-block">{char}</span>
-                  ))}
-                </span>
-              ))}
-            </h2>
+           
+           
           </div>
         </div>
 
@@ -197,18 +190,11 @@ export default function HomePage() {
           </div>
 
           <div className="w-full min-h-screen flex items-center justify-center bg-black">
-            <h2 className="text-6xl font-bold font-poppins text-white max-w-[80%] text-center">
-            {aboutTextReveal.split(' ').map((word, i) => (
-              <span key={i} className="inline-block mr-3">
-                {word.split('').map((char, j) => (
-                  <span key={j} className="letter inline-block">{char}</span>
-                ))}
-              </span>
-            ))}
-            </h2>
+           
+
           </div>
 
-          
+
         </div>
 
 
