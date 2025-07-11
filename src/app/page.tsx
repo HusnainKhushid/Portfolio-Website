@@ -108,39 +108,54 @@ export default function HomePage() {
     <>
       <div className="main relative">
         {/* === BACKGROUND CONTENT (Layer 1) === */}
-        <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full">
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              autoPlay
-              loop
-              muted
-              playsInline
-            >
-              <source src="/hero.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+        <div>
+          <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full">
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+              >
+                <source src="/hero.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div className="absolute top-0 left-0 w-full h-full min-h-screen flex flex-col items-center justify-center z-20">
+              <h1 data-mask-size="700" className="text-white text-5xl font-extrabold text-center leading-tight drop-shadow-lg">
+                Making good<br />
+                shit since<br />
+                2019
+              </h1>
+            </div>
           </div>
-          <div className="absolute top-0 left-0 w-full h-full min-h-screen flex flex-col items-center justify-center z-20">
-            <h1 data-mask-size="700" className="text-white text-5xl font-extrabold text-center leading-tight drop-shadow-lg">
-              Making good<br />
-              shit since<br />
-              2019
-            </h1>
+          <div className="w-full min-h-screen flex items-center justify-center bg-white">
+            <h2 data-mask-size="700" ref={textRef} className="text-6xl font-bold font-poppins text-gray-800 max-w-[80%] text-center">
+              {aboutText.split(' ').map((word, i) => (
+                <span key={i} className="inline-block mr-3">
+                  {word.split('').map((char, j) => (
+                    <span key={j} className="letter inline-block">{char}</span>
+                  ))}
+                </span>
+              ))}
+            </h2>
+          </div>
+
+          <div className="w-full min-h-screen flex items-center justify-center bg-white">
+            <h2 data-mask-size="700" ref={textRef} className="text-6xl font-bold font-poppins text-gray-800 max-w-[80%] text-center">
+              {aboutText.split(' ').map((word, i) => (
+                <span key={i} className="inline-block mr-3">
+                  {word.split('').map((char, j) => (
+                    <span key={j} className="letter inline-block">{char}</span>
+                  ))}
+                </span>
+              ))}
+            </h2>
           </div>
         </div>
-        <div className="w-full min-h-screen flex items-center justify-center bg-white">
-          <h2 data-mask-size="700" ref={textRef} className="text-6xl font-bold font-poppins text-gray-800 max-w-[80%] text-center">
-            {aboutText.split(' ').map((word, i) => (
-              <span key={i} className="inline-block mr-3">
-                {word.split('').map((char, j) => (
-                  <span key={j} className="letter inline-block">{char}</span>
-                ))}
-              </span>
-            ))}
-          </h2>
-        </div>
+
 
         {/* === REVEAL OVERLAY (Layer 2) === */}
         <div
@@ -180,7 +195,23 @@ export default function HomePage() {
             ))}
             </h2>
           </div>
+
+          <div className="w-full min-h-screen flex items-center justify-center bg-black">
+            <h2 className="text-6xl font-bold font-poppins text-white max-w-[80%] text-center">
+            {aboutTextReveal.split(' ').map((word, i) => (
+              <span key={i} className="inline-block mr-3">
+                {word.split('').map((char, j) => (
+                  <span key={j} className="letter inline-block">{char}</span>
+                ))}
+              </span>
+            ))}
+            </h2>
+          </div>
+
+          
         </div>
+
+
       </div>
     </>
   );
