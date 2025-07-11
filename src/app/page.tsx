@@ -68,7 +68,7 @@ export default function HomePage() {
     // --- 4. ATTACH LISTENERS ---
     window.addEventListener("mousemove", handleMouseMove);
     lenis.on('scroll', ScrollTrigger.update);
-    lenis.on("scroll", (e: any) => {
+    lenis.on("scroll", (e: Lenis) => {
       syncCursorPosition();
       if(video) videoYTo(e.scroll * 0.4);
     });
@@ -101,7 +101,8 @@ export default function HomePage() {
     };
   }, []);
 
-  const aboutText = "Second Section And this will be a About me section wherer i place stuff regarding me";
+  const aboutText = "I’m a visual designer who brings ideas to life through motion, design, and storytelling.From bold animations to intuitive interfaces, I help brands stand out and connect.";
+  const aboutTextReveal = "I’m a visual designer who COPIES ideas to life through motion, design, and storytelling.From bold animations to intuitive interfaces, I help brands stand out and connect.";
 
   return (
     <>
@@ -130,7 +131,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="w-full min-h-screen flex items-center justify-center bg-white">
-          <h2 data-mask-size="700" ref={textRef} className="text-3xl font-bold text-gray-800 max-w-4xl text-center">
+          <h2 data-mask-size="700" ref={textRef} className="text-6xl font-bold font-poppins text-gray-800 max-w-[80%] text-center">
             {aboutText.split(' ').map((word, i) => (
               <span key={i} className="inline-block mr-3">
                 {word.split('').map((char, j) => (
@@ -169,7 +170,15 @@ export default function HomePage() {
           </div>
           {/* REVEALED SECTION 2 */}
           <div className="w-full min-h-screen flex items-center justify-center bg-black">
-            <h2 className="text-3xl font-bold text-white max-w-4xl text-center">Second Section And this will be a About YOU section wherer i place stuff regarding me</h2>
+            <h2 className="text-6xl font-bold font-poppins text-white max-w-[80%] text-center">
+            {aboutTextReveal.split(' ').map((word, i) => (
+              <span key={i} className="inline-block mr-3">
+                {word.split('').map((char, j) => (
+                  <span key={j} className="letter inline-block">{char}</span>
+                ))}
+              </span>
+            ))}
+            </h2>
           </div>
         </div>
       </div>
