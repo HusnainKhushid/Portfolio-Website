@@ -4,11 +4,21 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "@studio-freight/lenis";
+import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
+import Player from "lottie-react";
+import { useLottie, useLottieInteractivity } from "lottie-react";
 
 export default function HomePage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const revealRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const lottieRef = useRef<HTMLDivElement>(null);
+  const [lottieData, setLottieData] = useState<any>(null);
+
+  useEffect(() => {
+    import("../../public/data.json").then((mod) => setLottieData(mod.default || mod));
+  }, []);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -92,6 +102,27 @@ export default function HomePage() {
       }
     });
 
+    // --- LOTTIE ANIMATION SCROLLTRIGGER ---
+    if (lottieRef.current) {
+      gsap.fromTo(
+        lottieRef.current,
+        { opacity: 1, scale: 0.8 },
+        {
+          opacity: 1,
+          scale: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: lottieRef.current.parentElement,
+            start: "top top",
+            end: "bottom top",
+            scrub: 2,
+            pin: true,
+            pinSpacing: true,
+          },
+        }
+      );
+    }
+
     // --- 5. CLEANUP ---
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
@@ -101,12 +132,26 @@ export default function HomePage() {
     };
   }, []);
 
-  const aboutText = "I’m a visual designer who brings ideas to life through motion, design, and storytelling.From bold animations to intuitive interfaces, I help brands stand out and connect.";
-  const aboutTextReveal = "I’m a visual designer who COPIES ideas to life through motion, design, and storytelling.From bold animations to intuitive interfaces, I help brands stand out and connect.";
+  const aboutText = "I’m a visual designer who brings ideas to life through motion, design and storytelling. From bold animations to intuitive interfaces,I help brands express who they are — and why they matter.";
+  const aboutTextReveal = "I’m a visual designer who brings ideas to life through motion, design and storytelling. From bold animations to intuitive interfaces,I help brands express who they are — and why they matter.";
+
+  const lottieOptions = { animationData: lottieData || {} };
+  const lottieObj = useLottie({ ...lottieOptions, style: { width: "100%", height: "auto" } });
+  const LottieScroll = useLottieInteractivity({
+    lottieObj,
+    mode: "scroll",
+    actions: [
+      {
+        visibility: [0, 1],
+        type: "seek",
+        frames: [0, 276],
+      },
+    ],
+  });
 
   return (
     <>
-      <div className="main relative">
+      <div className={`main relative`}>
         {/* === BACKGROUND CONTENT (Layer 1) === */}
         <div>
           <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden">
@@ -123,16 +168,20 @@ export default function HomePage() {
                 Your browser does not support the video tag.
               </video>
             </div>
-            <div className="absolute top-0 left-0 w-full h-full min-h-screen flex flex-col items-center justify-center z-20">
-              <h1 data-mask-size="700" className="text-white text-5xl font-extrabold text-center leading-tight drop-shadow-lg">
-                Making good<br />
-                shit since<br />
+
+            <div className="absolute top-0 left-0 h-full min-h-screen flex flex-col justify-center" style={{ paddingLeft: '15%' }}>
+              
+              <h2 data-mask-size="1200" className="text-[#b7ab98] text-2xl text-center tracking-[0.3em]">HUSNAIN KHURSHID</h2>
+              <h1 data-mask-size="1200" className="text-[#b7ab98] text-[190px] font-extrabold leading-none">
+                MAKING<br/>
+                GOOD<br/>
+                <span className="text-[#EB5939]">SHIT SINCE</span><br/>
                 2019
               </h1>
             </div>
           </div>
-          <div className="w-full min-h-screen flex items-center justify-center bg-white">
-            <h2 data-mask-size="700" ref={textRef} className="text-6xl font-bold font-poppins text-gray-800 max-w-[80%] text-center">
+          <div className="w-full min-h-screen flex items-center justify-center bg-[#D9D9D9]">
+            <h2 data-mask-size="1200" ref={textRef} className="text-8xl font-bold text-gray-800 max-w-[80%] text-center">
               {aboutText.split(' ').map((word, i) => (
                 <span key={i} className="inline-block mr-3">
                   {word.split('').map((char, j) => (
@@ -143,9 +192,12 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="w-full min-h-screen flex items-center justify-center bg-white">
-           
-           
+          <div className="w-full min-h-[400vh] bg-white relative">
+            <div className="sticky top-0 h-screen flex items-center justify-center">
+              <div ref={lottieRef} className="w-full max-w-full">
+                {lottieData && LottieScroll}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -167,18 +219,20 @@ export default function HomePage() {
           }}
         >
           {/* REVEALED SECTION 1 */}
-          <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full min-h-screen flex flex-col items-center justify-center bg-amber-800">
-              <h1 className="text-white text-5xl font-extrabold text-center leading-tight drop-shadow-lg">
-                Making bad<br />
-                shit since<br />
-                2015
+          <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden bg-[#EB5939]">
+            <div className="absolute top-0 left-0 h-full min-h-screen flex flex-col justify-center" style={{ paddingLeft: '15%' }}>
+              <h2 className="text-[#000000] text-2xl text-center tracking-[0.3em]">HUSNAIN KHURSHID</h2>
+              <h1 className="text-[#000000] text-[190px] font-extrabold leading-none">
+                HIDING<br />
+                BAD <br />
+                SHIT SINCE<br />
+                2019
               </h1>
             </div>
           </div>
           {/* REVEALED SECTION 2 */}
-          <div className="w-full min-h-screen flex items-center justify-center bg-black">
-            <h2 className="text-6xl font-bold font-poppins text-white max-w-[80%] text-center">
+          <div className="w-full min-h-screen flex items-center justify-center bg-[#EB5939]">
+            <h2 className="text-8xl font-bold text-[#000000] max-w-[80%] text-center">
             {aboutTextReveal.split(' ').map((word, i) => (
               <span key={i} className="inline-block mr-3">
                 {word.split('').map((char, j) => (
