@@ -7,12 +7,42 @@ import Lenis from "@studio-freight/lenis";
 import { useState, useEffect } from "react";
 import { useLottie, useLottieInteractivity } from "lottie-react";
 
+// A simplified type for a Lottie asset.
+interface LottieAsset {
+  id: string;
+  // Other properties can exist on an asset.
+  [key: string]: unknown;
+}
+
+// A simplified type for a Lottie layer.
+interface LottieLayer {
+  nm: string; // name
+  ty: number; // type
+  // Other properties can exist on a layer.
+  [key: string]: unknown;
+}
+
+interface LottieData {
+  // Define the structure of your Lottie JSON data here
+  // This is a basic structure, you might need to adjust it
+  v: string;
+  fr: number;
+  ip: number;
+  op: number;
+  w: number;
+  h: number;
+  nm: string;
+  ddd: number;
+  assets: LottieAsset[];
+  layers: LottieLayer[];
+}
+
 export default function HomePage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const revealRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
   const lottieRef = useRef<HTMLDivElement>(null);
-  const [lottieData, setLottieData] = useState<any>(null);
+  const [lottieData, setLottieData] = useState<LottieData | null>(null);
 
   useEffect(() => {
     import("../../public/data.json").then((mod) => setLottieData(mod.default || mod));
