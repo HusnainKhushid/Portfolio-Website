@@ -4,9 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "@studio-freight/lenis";
-import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
-import Player from "lottie-react";
 import { useLottie, useLottieInteractivity } from "lottie-react";
 
 export default function HomePage() {
