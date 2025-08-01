@@ -43,6 +43,10 @@ export default function HomePage() {
   const textRef = useRef<HTMLHeadingElement>(null);
   const lottieRef = useRef<HTMLDivElement>(null);
   const [lottieData, setLottieData] = useState<LottieData | null>(null);
+  const visualMaskRef = useRef<HTMLDivElement>(null);
+  const motionMaskRef = useRef<HTMLDivElement>(null);
+  const productMaskRef = useRef<HTMLDivElement>(null);
+  const promoMaskRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     import("../../public/data.json").then((mod) => setLottieData(mod.default || mod));
@@ -52,11 +56,13 @@ export default function HomePage() {
     gsap.registerPlugin(ScrollTrigger);
 
     // --- 1. SETUP ---
+    
     const video = videoRef.current;
     const reveal = revealRef.current;
-    const text = textRef.current;
-    if (!reveal || !text) return;
+    const lines = textRef.current?.querySelectorAll('p');
+    if (!reveal || !lines) return;
 
+    console.log(lines)
     const lenis = new Lenis();
     gsap.ticker.add(t => lenis.raf(t * 1000));
 
@@ -112,23 +118,58 @@ export default function HomePage() {
     });
 
     // --- New Animation ---
-    const letters = text.querySelectorAll('.letter');
-    gsap.fromTo(letters, {
-      opacity: 0.5
-    }, {
-      opacity: 1,
-      ease: 'power2.out',
-      stagger: {
-        each: 0.02,
-        from: 'start'
-      },
-      scrollTrigger: {
-        trigger: text,
-        start: 'top bottom',
-        end: 'bottom 50%',
-        scrub: 1.5,
-      }
+    const allRevealTextElements = document.querySelectorAll('.reveal-text');
+    allRevealTextElements.forEach((line) => {
+      gsap.to(line, {
+        backgroundPositionX: "0%",
+        scrollTrigger: {
+          trigger: line,
+          start: "top 80%",
+          end: "bottom 20%",
+          scrub: 1,
+        },
+      });
     });
+    
+    // Mask animation function for reusable hover effects
+    const setupMaskAnimation = (maskRef: React.RefObject<HTMLDivElement | null>) => {
+      if (maskRef.current) {
+        const maskElement = maskRef.current;
+        const spanTag = maskElement.querySelector('span') as HTMLElement;
+        
+        if (spanTag) {
+          // Set initial state
+          gsap.set(maskElement, {
+            maskSize: '100% 0%',
+            WebkitMaskSize: '100% 0%',
+          });
+          
+          // Create timeline for smooth animation
+          const maskTimeline = gsap.timeline({ paused: true });
+          maskTimeline.to(maskElement, {
+            maskSize: '100% 100%',
+            WebkitMaskSize: '100% 100%',
+            duration: 0.6,
+            ease: 'power2.out',
+          });
+          
+          // Add hover event listeners to the span tag
+          spanTag.addEventListener('mouseenter', () => {
+            maskTimeline.play();
+          });
+          
+          spanTag.addEventListener('mouseleave', () => {
+            maskTimeline.reverse();
+          });
+        }
+      }
+    };
+
+    // Setup mask animations for all sections
+    setupMaskAnimation(visualMaskRef);
+    setupMaskAnimation(motionMaskRef);
+    setupMaskAnimation(productMaskRef);
+    setupMaskAnimation(promoMaskRef);
 
     // --- LOTTIE ANIMATION SCROLLTRIGGER ---
     if (lottieRef.current) {
@@ -159,9 +200,6 @@ export default function HomePage() {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
-
-  const aboutText = "I’m a visual designer who brings ideas to life through motion, design and storytelling. From bold animations to intuitive interfaces,I help brands express who they are — and why they matter.";
-  const aboutTextReveal = "I’m a visual designer who brings ideas to life through motion, design and storytelling. From bold animations to intuitive interfaces,I help brands express who they are — and why they matter.";
 
   const lottieOptions = { animationData: lottieData || {} };
   const lottieObj = useLottie({ ...lottieOptions, style: { width: "100%", height: "auto" } });
@@ -208,26 +246,109 @@ export default function HomePage() {
               </h1>
             </div>
           </div>
-          <div className="w-full min-h-screen flex items-center justify-center bg-[#D9D9D9]">
-            <h2 data-mask-size="1200" ref={textRef} className="text-8xl font-bold text-gray-800 max-w-[80%] text-center">
-              {aboutText.split(' ').map((word, i) => (
-                <span key={i} className="inline-block mr-3">
-                  {word.split('').map((char, j) => (
-                    <span key={j} className="letter inline-block">{char}</span>
-                  ))}
-                </span>
-              ))}
-            </h2>
+          
+          <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9]"> 
+                <div className="relative w-screen h-[100px] flex items-center"> {/* or any height */}
+                    <span data-mask-size="1200"className="absolute left-1/8 text-2xl text-[#383838] font-semibold tracking-[0.3em]">ABOUT ME</span>
+                </div>
+                <h2 data-mask-size="1200" ref={textRef} className="text-8xl font-bold text-gray-800 max-w-[90%] text-center">
+                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">I’m a visual designer who brings ideas to life through </p>
+                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">motion, design and storytelling.From bold </p>
+                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">animations to intuitive interfaces,I help brands express </p>
+                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold"> who they are — and why they matter.</p>
+                </h2>
+          </div>
+          
+
+          <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9]">
+            <div className="bg-[#D9D9D9]">
+                <div className="relative w-screen h-[100px] flex items-center"> {/* or any height */}
+                    <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">WHAT I DO</span>
+                </div>
+                
+                <div className="w-full flex justify-center">
+                  <div className="w-[100%]"> 
+                    <div  className="border-t-1 border-gray-500">
+                      <p className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]"> 
+                        <span data-mask-size="0"> VISUAL</span>
+                      </p>
+                    </div>
+                    <div className="border-t-1 border-gray-500">
+                      <p  className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]">
+                        <span data-mask-size="0"> MOTION</span>
+                      </p>
+                    </div>
+                    <div className="border-t-1 border-gray-500">
+                      <p  className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]">
+                        <span data-mask-size="0">PRODUCT</span>
+                      </p>
+                    </div>
+                    <div className="border-t-1 border-gray-500 border-b-1">
+                      <p className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]">
+                        <span data-mask-size="0">PROMO</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div className="absolute ">
+
+                <div className="relative w-screen h-[100px] flex items-center"> {/* or any height */}
+                    <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">WHAT I DO</span>
+                </div>
+                
+                <div className="w-full flex justify-center">
+                  <div className="w-[100%]"> 
+
+
+                    <div  
+                      ref={visualMaskRef} 
+                      className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal"
+                    >
+                      <p className="text-[120px] font-bold text-gray-800 ml-[15%]"> 
+                        <span data-mask-size="0"> VISUAL</span>
+                      </p>
+                    </div>
+
+                    
+                    <div 
+                      ref={motionMaskRef}
+                      className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal"
+                    >
+                      <p  className="text-[120px] font-bold text-gray-800 ml-[15%]">
+                        <span data-mask-size="0"> MOTION</span>
+                      </p>
+                    </div>
+                    <div 
+                      ref={productMaskRef}
+                      className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal"
+                    >
+                      <p  className="text-[120px] font-bold text-gray-800 ml-[15%]">
+                        <span data-mask-size="0">PRODUCT</span>
+                      </p>
+                    </div>
+                    <div 
+                      ref={promoMaskRef}
+                      className="border-t-1 border-gray-500 border-b-1 bg-[#EB5939] mask-reveal"
+                    >
+                      <p className="text-[120px] font-bold text-gray-800 ml-[15%]">
+                        <span data-mask-size="0">PROMO</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+            </div>
           </div>
 
-          <div className="w-full min-h-[400vh] bg-white relative">
-            <div className="sticky top-0 h-screen flex items-center justify-center">
-              <div ref={lottieRef} className="w-full max-w-full">
-                {lottieData && LottieScroll}
+            <div className="w-full min-h-[400vh] bg-white relative">
+              <div className="sticky top-0 h-screen flex items-center justify-center">
+                <div ref={lottieRef} className="w-full max-w-full">
+                  {lottieData && LottieScroll}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
 
         {/* === REVEAL OVERLAY (Layer 2) === */}
@@ -259,24 +380,42 @@ export default function HomePage() {
             </div>
           </div>
           {/* REVEALED SECTION 2 */}
-          <div className="w-full min-h-screen flex items-center justify-center bg-[#EB5939]">
-            <h2 className="text-8xl font-bold text-[#000000] max-w-[80%] text-center">
-            {aboutTextReveal.split(' ').map((word, i) => (
-              <span key={i} className="inline-block mr-3">
-                {word.split('').map((char, j) => (
-                  <span key={j} className="letter inline-block">{char}</span>
-                ))}
-              </span>
-            ))}
+          <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
+            <div className="relative w-screen h-[100px] flex items-center"> {/* or any height */}
+                <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">ABOUT ME</span>
+            </div>
+            <h2 className="text-8xl font-bold text-black max-w-[90%] text-center">
+                <p className="mb-[-16] leading-tight text-[80px] font-bold">I’m a visual designer who brings ideas to life through </p>
+                <p className="mb-[-16] leading-tight text-[80px] font-bold">motion, design and storytelling.From bold </p>
+                <p className="mb-[-16] leading-tight text-[80px] font-bold">animations to intuitive interfaces,I help brands express </p>
+                <p className="mb-[-16] leading-tight text-[80px] font-bold"> who they are — and why they matter.</p>
             </h2>
           </div>
 
-          <div className="w-full min-h-screen flex items-center justify-center bg-black">
-           
 
+          {/* REVEALED SECTION 3 */}
+          <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]"> 
+            <div className="relative w-screen h-[100px] flex items-center"> {/* or any height */}
+                <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">WHAT I DO</span>
+            </div>
+            
+            <div className="w-full flex justify-center">
+              <div className="w-[100%]"> 
+                <div  className="border-t-1 border-gray-500">
+                  <p className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]">VISUAL</p>
+                </div>
+                <div  className="border-t-1 border-gray-500">
+                  <p  className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]">MOTION</p>
+                </div>
+                <div className="border-t-1 border-gray-500">
+                  <p className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]">PRODUCT</p>
+                </div>
+                <div className="border-t-1 border-gray-500 border-b-1">
+                  <p  className="reveal-text text-[120px] font-bold text-gray-800 ml-[15%]">PROMO</p>
+                </div>
+              </div>
+            </div>
           </div>
-
-
         </div>
 
 
