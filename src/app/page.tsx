@@ -9,7 +9,7 @@ import { useLottie, useLottieInteractivity } from "lottie-react";
 
 // A simplified type for a Lottie asset.
 interface LottieAsset {
-  id: string;
+  id: string; 
   // Other properties can exist on an asset.
   [key: string]: unknown;
 }
@@ -271,7 +271,24 @@ export default function HomePage() {
       );
     }
 
-    // --- 9. CLEANUP ---
+    // --- 9. BANNER PARALLAX ANIMATION ---
+    const bannerElement = document.querySelector(".parallax-banner");
+    if (bannerElement) {
+      gsap.fromTo(bannerElement, {
+        y: "-30%", // Start position - moved up
+      }, {
+        y: "0%", // End position - perfect fit
+        ease: "none",
+        scrollTrigger: {
+          trigger: bannerElement.parentElement?.parentElement,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.5,
+        },
+      });
+    }
+
+    // --- 10. CLEANUP ---
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       gsap.ticker.remove(lenis.raf);
@@ -491,8 +508,40 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* --- NEW EMPTY SECTION --- */}
+        <div className="w-full h-[100vh] flex flex-col items-center justify-center relative overflow-hidden" data-mask-size="100">
+          {/* Parallax Background Image */}
+          <div className="absolute inset-0 w-full h-full -z-10">
+            <img
+              src="/banner-bottom-1200.jpg"
+              alt="Banner Background"
+              className="w-full h-[120%] object-cover parallax-banner"
+              style={{ transform: 'translateY(-20%)' }}
+            />
+          </div>
+          
+          {/* Section title positioned at top */}
+          <div className="relative w-screen h-[100px] flex items-center z-10">
+                <span className="absolute left-1/8 pt-40 text-2xl text-[#D9D9D9] font-semibold tracking-[0.3em]">
+                  MY MOTTO
+                </span>
+          </div>
+          
+          {/* Empty content area - can be filled with content later */}
+          <div className="flex items-center justify-center h-full z-10">
+            <div className="text-center">
+              <h2 className="text-[80px] font-bold text-[#D9D9D9]">
+                GOOD DESIGN
+              </h2>
+              <h2 className="text-[80px] font-bold text-[#D9D9D9]">
+                IS HONEST
+              </h2>
+            </div>
+          </div>
+        </div>
+
         {/* --- LOTTIE ANIMATION SECTION --- */}
-        <div className="w-full min-h-[400vh] bg-white relative">
+        <div className="w-full min-h-[400vh] bg-white relative" >
           <div className="sticky top-0 h-screen flex items-center justify-center">
             <div ref={lottieRef} className="w-full max-w-full">
               {lottieData && LottieScroll}
@@ -566,7 +615,7 @@ export default function HomePage() {
 
           {/* --- REVEALED WHAT I DO SECTION --- */}
           <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
-            <div className="bg-[#EB5939]">
+           
               <div className="relative w-screen h-[100px] flex items-center">
                 <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
                   WHAT I DO
@@ -597,12 +646,38 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            </div>
           </div>
 
           {/* --- REVEALED SHOWREEL SECTION --- */}
-          <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
+          <div className="w-full min-h-screen items-center justify-center bg-[#EB5939]">
+          <div className="relative top-0 left-0 w-full h-[100px] flex items-center">
+            <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em] test">
+              SHOWREEL
+            </span>
+          </div>
 
+          </div>
+
+          {/* --- REVEALED NEW EMPTY SECTION --- */}
+          <div className="w-full h-[100vh] flex flex-col items-center justify-center bg-[#EB5939]">
+            {/* Section title positioned at top */}
+            <div className="relative w-screen h-[100px] flex items-center">
+              <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
+                MY MOTTO
+              </span>
+            </div>
+            
+            {/* Revealed content area */}
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <h2 className="text-[80px] font-bold text-black">
+                  TEST MY MOTTO
+                </h2>
+                <p className="text-2xl text-black mt-4">
+                  This is the revealed version of the new section
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
