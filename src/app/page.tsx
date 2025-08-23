@@ -62,11 +62,18 @@ export default function HomePage() {
     );
   }, []);
 
-  // --- Lottie component setup ---
+  // --- Lottie component setup with performance optimizations ---
   const lottieOptions = { 
     animationData: lottieData || {},
     loop: false,
     autoplay: false, // Disable autoplay to let GSAP control it
+    renderer: 'svg' as const, // Use SVG renderer for better performance
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+      progressiveLoad: true, // Load progressively for better performance
+      hideOnTransparent: true,
+      className: 'lottie-svg' // Add class for potential CSS optimizations
+    }
   };
   const lottieObj = useLottie({
     ...lottieOptions,
@@ -243,7 +250,7 @@ export default function HomePage() {
     setupMaskAnimation(productMaskRef);
     setupMaskAnimation(promoMaskRef);
 
-    // --- 7. LOTTIE ANIMATION SCROLLTRIGGER ---
+    // --- 7. LOTTIE ANIMATION SCROLLTRIGGER (OPTIMIZED FOR SMOOTH PERFORMANCE) ---
     // Control Lottie animation with GSAP ScrollTrigger
     if (lottieRef.current && lottieObj && lottieObj.animationItem) {
       const animation = lottieObj.animationItem;
@@ -253,12 +260,16 @@ export default function HomePage() {
         trigger: lottieRef.current.parentElement,
         start: "top bottom",
         end: "bottom top", 
-        scrub: 1,
+        scrub: 1.2, // Slightly higher for smoother feel
+        invalidateOnRefresh: true, // Recalculate on window resize
+        refreshPriority: -1, // Lower refresh priority for better performance
         onUpdate: (self) => {
-          // Calculate the current frame based on scroll progress
-          const frame = Math.floor(self.progress * totalFrames);
+          // SMOOTH FRAME INTERPOLATION - No Math.floor for buttery smooth animation!
+          const frame = self.progress * (totalFrames - 1); // -1 because frames are 0-indexed
           animation.goToAndStop(frame, true);
-          console.log(`GSAP Scroll Progress: ${(self.progress * 100).toFixed(1)}% - Frame: ${frame}`);
+          
+          // Optional: Uncomment for debugging (but remove for production performance)
+          // console.log(`Smooth Progress: ${(self.progress * 100).toFixed(1)}% - Frame: ${frame.toFixed(2)}`);
         },
       });
 
@@ -269,6 +280,9 @@ export default function HomePage() {
         end: "bottom top",
         pin: true,
         pinSpacing: true,
+        markers: true,
+        refreshPriority: 0, // Normal priority for pinning
+        invalidateOnRefresh: true // Recalculate pin positioning on resize
       });
     }
 
