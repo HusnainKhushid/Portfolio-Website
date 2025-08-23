@@ -207,8 +207,8 @@ export default function HomePage() {
       });
     });
 
-    // --- 6. MASK HOVER ANIMATION ---
-    // Reusable function for hover effects
+    // --- 6. MASK HOVER ANIMATION (FIXED FOR COMPLETE ANIMATIONS) ---
+    // Reusable function for hover effects with proper completion handling
     const setupMaskAnimation = (
       maskRef: React.RefObject<HTMLDivElement | null>
     ) => {
@@ -223,22 +223,42 @@ export default function HomePage() {
             WebkitMaskSize: "100% 0%",
           });
 
-          // Create timeline for smooth animation
-          const maskTimeline = gsap.timeline({ paused: true });
-          maskTimeline.to(maskElement, {
-            maskSize: "100% 100%",
-            WebkitMaskSize: "100% 100%",
-            duration: 0.6,
-            ease: "power2.out",
-          });
+          // Track animation state to prevent interruptions
+          let isAnimating = false;
+          let currentTween: gsap.core.Tween | null = null;
 
-          // Add hover event listeners
+          // Function to animate to target state
+          const animateToState = (targetHeight: string, onComplete?: () => void) => {
+            // Kill any existing animation
+            if (currentTween) {
+              currentTween.kill();
+            }
+
+            isAnimating = true;
+            currentTween = gsap.to(maskElement, {
+              maskSize: `100% ${targetHeight}`,
+              WebkitMaskSize: `100% ${targetHeight}`,
+              duration: 0.6,
+              ease: "power2.out",
+              onComplete: () => {
+                isAnimating = false;
+                currentTween = null;
+                if (onComplete) onComplete();
+              },
+              onInterrupt: () => {
+                isAnimating = false;
+                currentTween = null;
+              }
+            });
+          };
+
+          // Add hover event listeners with proper state management
           spanTag.addEventListener("mouseenter", () => {
-            maskTimeline.play();
+            animateToState("100%");
           });
 
           spanTag.addEventListener("mouseleave", () => {
-            maskTimeline.reverse();
+            animateToState("0%");
           });
         }
       }
