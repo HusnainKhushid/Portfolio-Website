@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "@studio-freight/lenis";
 import { useState, useEffect } from "react";
-import { useLottie, useLottieInteractivity } from "lottie-react";
+import { useLottie } from "lottie-react";
 
 // A simplified type for a Lottie asset.
 interface LottieAsset {
@@ -57,10 +57,21 @@ export default function HomePage() {
 
   // --- Effect to load Lottie data dynamically ---
   useEffect(() => {
-    import("../../public/data.json").then((mod) =>
+    import("../../public/test3.json").then((mod) =>
       setLottieData(mod.default || mod)
     );
   }, []);
+
+  // --- Lottie component setup ---
+  const lottieOptions = { 
+    animationData: lottieData || {},
+    loop: false,
+    autoplay: false, // Disable autoplay to let GSAP control it
+  };
+  const lottieObj = useLottie({
+    ...lottieOptions,
+    style: { width: "100%", height: "100%" },
+  });
 
   // --- Fullscreen functionality ---
   const handleShowreelClick = async () => {
@@ -233,24 +244,32 @@ export default function HomePage() {
     setupMaskAnimation(promoMaskRef);
 
     // --- 7. LOTTIE ANIMATION SCROLLTRIGGER ---
-    if (lottieRef.current) {
-      gsap.fromTo(
-        lottieRef.current,
-        { opacity: 1, scale: 0.8 },
-        {
-          opacity: 1,
-          scale: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: lottieRef.current.parentElement,
-            start: "top top",
-            end: "bottom top",
-            scrub: 2,
-            pin: true,
-            pinSpacing: true,
-          },
-        }
-      );
+    // Control Lottie animation with GSAP ScrollTrigger
+    if (lottieRef.current && lottieObj && lottieObj.animationItem) {
+      const animation = lottieObj.animationItem;
+      const totalFrames = animation.totalFrames || 300; // Fallback to 300 frames
+      
+      ScrollTrigger.create({
+        trigger: lottieRef.current.parentElement,
+        start: "top bottom",
+        end: "bottom top", 
+        scrub: 1,
+        onUpdate: (self) => {
+          // Calculate the current frame based on scroll progress
+          const frame = Math.floor(self.progress * totalFrames);
+          animation.goToAndStop(frame, true);
+          console.log(`GSAP Scroll Progress: ${(self.progress * 100).toFixed(1)}% - Frame: ${frame}`);
+        },
+      });
+
+      // Pin the section for sticky scroll effect
+      ScrollTrigger.create({
+        trigger: lottieRef.current.parentElement,
+        start: "center center",
+        end: "bottom top",
+        pin: true,
+        pinSpacing: true,
+      });
     }
 
     // --- 8. SHOWREEL VIDEO SCALE ANIMATION ---
@@ -295,25 +314,9 @@ export default function HomePage() {
       lenis.destroy();
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, [showreelVideoRef]);
+  }, [showreelVideoRef, lottieObj]);
 
-  // --- Lottie component setup ---
-  const lottieOptions = { animationData: lottieData || {} };
-  const lottieObj = useLottie({
-    ...lottieOptions,
-    style: { width: "100%", height: "auto" },
-  });
-  const LottieScroll = useLottieInteractivity({
-    lottieObj,
-    mode: "scroll",
-    actions: [
-      {
-        visibility: [0, 1],
-        type: "seek",
-        frames: [0, 276],
-      },
-    ],
-  });
+
 
   // =================================================================================================
   // JSX RENDER
@@ -542,9 +545,9 @@ export default function HomePage() {
 
         {/* --- LOTTIE ANIMATION SECTION --- */}
         <div className="w-full min-h-[400vh] bg-white relative" >
-          <div className="sticky top-0 h-screen flex items-center justify-center">
-            <div ref={lottieRef} className="w-full max-w-full">
-              {lottieData && LottieScroll}
+          <div className="w-full sticky top-0 h-screen">
+            <div ref={lottieRef} className="w-full h-full">
+              {lottieData && lottieObj.View}
             </div>
           </div>
         </div>
