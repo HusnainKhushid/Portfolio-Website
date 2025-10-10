@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "@studio-freight/lenis";
 import { useState, useEffect } from "react";
 import { useLottie } from "lottie-react";
+import Image from "next/image";
 
 // A simplified type for a Lottie asset.
 interface LottieAsset {
@@ -57,7 +58,7 @@ export default function HomePage() {
 
   // --- Effect to load Lottie data dynamically ---
   useEffect(() => {
-    import("../../public/test3.json").then((mod) =>
+    import("../../public/data.json").then((mod) =>
       setLottieData(mod.default || mod)
     );
   }, []);
@@ -224,6 +225,7 @@ export default function HomePage() {
           });
 
           // Track animation state to prevent interruptions
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           let isAnimating = false;
           let currentTween: gsap.core.Tween | null = null;
 
@@ -549,11 +551,13 @@ export default function HomePage() {
         <div className="w-full h-[100vh] flex flex-col items-center justify-center relative overflow-hidden" data-mask-size="100">
           {/* Parallax Background Image */}
           <div className="absolute inset-0 w-full h-full -z-10">
-            <img
+            <Image
               src="/banner-bottom-1200.jpg"
               alt="Banner Background"
-              className="w-full h-[120%] object-cover parallax-banner"
+              fill
+              className="object-cover parallax-banner"
               style={{ transform: 'translateY(-20%)' }}
+              priority
             />
           </div>
           
