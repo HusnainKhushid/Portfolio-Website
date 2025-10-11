@@ -48,6 +48,7 @@ export default function HomePage() {
   const revealRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
   const lottieRef = useRef<HTMLDivElement>(null);
+  const lottie2Ref = useRef<HTMLDivElement>(null);
   const visualMaskRef = useRef<HTMLDivElement>(null);
   const motionMaskRef = useRef<HTMLDivElement>(null);
   const productMaskRef = useRef<HTMLDivElement>(null);
@@ -55,11 +56,15 @@ export default function HomePage() {
 
   // --- State for Lottie animation data ---
   const [lottieData, setLottieData] = useState<LottieData | null>(null);
+  const [lottieData2, setLottieData2] = useState<LottieData | null>(null);
 
   // --- Effect to load Lottie data dynamically ---
   useEffect(() => {
     import("../../public/data.json").then((mod) =>
       setLottieData(mod.default || mod)
+    );
+    import("../../public/data2.json").then((mod) =>
+      setLottieData2(mod.default || mod)
     );
   }, []);
 
@@ -78,6 +83,24 @@ export default function HomePage() {
   };
   const lottieObj = useLottie({
     ...lottieOptions,
+    style: { width: "100%", height: "100%" },
+  });
+
+  // --- Second Lottie component setup for data2.json ---
+  const lottie2Options = { 
+    animationData: lottieData2 || {},
+    loop: true, // Loop for continuous play
+    autoplay: false, // Will be controlled by ScrollTrigger
+    renderer: 'svg' as const,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+      progressiveLoad: true,
+      hideOnTransparent: true,
+      className: 'lottie-svg-2'
+    }
+  };
+  const lottie2Obj = useLottie({
+    ...lottie2Options,
     style: { width: "100%", height: "100%" },
   });
 
@@ -290,6 +313,18 @@ export default function HomePage() {
           const frame = self.progress * (totalFrames - 1); // -1 because frames are 0-indexed
           animation.goToAndStop(frame, true);
           
+          // Control data2.json overlay opacity based on scroll progress
+          if (lottie2Ref.current) {
+            let overlayOpacity = 0;
+            
+            if (self.progress >= 0.95) {
+              // Fade in when progress is 95% or more
+              overlayOpacity = (self.progress - 0.95) / 0.05; // Maps 0.95-1.0 to 0-1
+            }
+            
+            gsap.set(lottie2Ref.current, { opacity: overlayOpacity });
+          }
+          
           // Optional: Uncomment for debugging (but remove for production performance)
           // console.log(`Smooth Progress: ${(self.progress * 100).toFixed(1)}% - Frame: ${frame.toFixed(2)}`);
         },
@@ -306,6 +341,17 @@ export default function HomePage() {
         refreshPriority: 0, // Normal priority for pinning
         invalidateOnRefresh: true // Recalculate pin positioning on resize
       });
+    }
+
+    // --- SECOND LOTTIE ANIMATION CONTROL (SIMPLE OVERLAY) ---
+    if (lottie2Ref.current && lottie2Obj && lottie2Obj.animationItem) {
+      const secondAnimation = lottie2Obj.animationItem;
+      
+      // Start the second animation immediately and keep it looping
+      secondAnimation.play();
+      
+      // Start with overlay hidden (opacity will be controlled by scroll progress)
+      gsap.set(lottie2Ref.current, { opacity: 0 });
     }
 
     // --- 8. SHOWREEL VIDEO SCALE ANIMATION ---
@@ -583,9 +629,19 @@ export default function HomePage() {
 
         {/* --- LOTTIE ANIMATION SECTION --- */}
         <div className="w-full min-h-[400vh] bg-white relative" >
-          <div className="w-full sticky top-0 h-screen">
+          <div className="w-full sticky top-0 h-screen relative">
+            {/* First Lottie Animation (data.json) */}
             <div ref={lottieRef} className="w-full h-full">
               {lottieData && lottieObj.View}
+            </div>
+            
+            {/* Second Lottie Animation (data2.json) - Overlay */}
+            <div 
+              ref={lottie2Ref} 
+              className="absolute inset-0 w-full h-full z-10 pointer-events-none opacity-0"
+              style={{ backgroundColor: 'transparent' }}
+            >
+              {lottieData2 && lottie2Obj.View}
             </div>
           </div>
         </div>
