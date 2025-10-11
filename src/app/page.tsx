@@ -313,16 +313,22 @@ export default function HomePage() {
           const frame = self.progress * (totalFrames - 1); // -1 because frames are 0-indexed
           animation.goToAndStop(frame, true);
           
-          // Control data2.json overlay opacity based on scroll progress
+          // Control data2.json overlay opacity and scale based on scroll progress
           if (lottie2Ref.current) {
             let overlayOpacity = 0;
+            let overlayScale = 0.4; // Start smaller
             
-            if (self.progress >= 0.95) {
-              // Fade in when progress is 95% or more
-              overlayOpacity = (self.progress - 0.95) / 0.05; // Maps 0.95-1.0 to 0-1
+            if (self.progress >= 0.90) {
+              // Fade in and scale up when progress is 90% or more
+              const progressNormalized = (self.progress - 0.90) / 0.10; // Maps 0.90-1.0 to 0-1
+              overlayOpacity = progressNormalized;
+              overlayScale = 0.4 + (progressNormalized * 0.6); // Scale from 0.8 to 1.0
             }
             
-            gsap.set(lottie2Ref.current, { opacity: overlayOpacity });
+            gsap.set(lottie2Ref.current, { 
+              opacity: overlayOpacity,
+              scale: overlayScale
+            });
           }
           
           // Optional: Uncomment for debugging (but remove for production performance)
