@@ -264,7 +264,7 @@ export default function HomePage() {
               maskSize: `100% ${targetHeight}`,
               WebkitMaskSize: `100% ${targetHeight}`,
               duration: 0.6,
-              ease: "power2.out",
+              ease: "power1.out",
               onComplete: () => {
                 isAnimating = false;
                 currentTween = null;
@@ -529,40 +529,56 @@ export default function HomePage() {
                   WHAT I DO
                 </span>
               </div>
-
+              {/* * reveal section { special case , <motionMaskRef> has to be in same div} * */}
               <div className="w-full flex justify-center">
                 <div className="w-[100%]">
-                  <div
+                 <div
                     ref={visualMaskRef}
-                    className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal"
+                    className="border-t border-gray-500 bg-[#EB5939] mask-reveal flex items-center justify-between px-[15%]"
                   >
-                    <p className="text-[120px] font-bold text-gray-800 ml-[15%]">
-                      <span data-mask-size="0"> VISUAL</span>
+                    <p className="text-[120px] font-bold text-black">
+                      <span data-mask-size="0">VISUAL</span>
                     </p>
-                  </div>
+
+                    <p className="text-[30px] font-medium text-black/90">
+                      <span data-mask-size="0">DESIGN</span>
+                    </p>
+                 </div>
 
                   <div
                     ref={motionMaskRef}
-                    className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal"
+                    className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal flex items-center justify-between px-[15%]"
                   >
-                    <p className="text-[120px] font-bold text-gray-800 ml-[15%]">
+                    <p className="text-[120px] font-bold text-black">
                       <span data-mask-size="0"> MOTION</span>
+                    </p>
+
+                    <p className="text-[30px] font-medium text-black/90">
+                      <span data-mask-size="0">GRAPHICS</span>
                     </p>
                   </div>
                   <div
                     ref={productMaskRef}
-                    className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal"
+                    className="border-t-1 border-gray-500 bg-[#EB5939] mask-reveal flex items-center justify-between px-[15%]"
                   >
-                    <p className="text-[120px] font-bold text-gray-800 ml-[15%]">
+                    <p className="text-[120px] font-bold text-black">
                       <span data-mask-size="0">PRODUCT</span>
+                    </p>
+
+                    <p className="text-[30px] font-medium text-black/90">
+                      <span data-mask-size="0">INTERFACES</span>
                     </p>
                   </div>
                   <div
                     ref={promoMaskRef}
-                    className="border-t-1 border-gray-500 border-b-1 bg-[#EB5939] mask-reveal"
+                    className="border-t-1 border-gray-500 border-b-1 bg-[#EB5939] mask-reveal flex items-center justify-between px-[15%]"
                   >
-                    <p className="text-[120px] font-bold text-gray-800 ml-[15%]">
+                    <p className="text-[120px] font-bold text-black">
                       <span data-mask-size="0">PROMO</span>
+                    </p>
+
+                    <p className="text-[30px] font-medium text-black/90">
+                      <span data-mask-size="0">VIDEOS</span>
                     </p>
                   </div>
                 </div>
@@ -716,7 +732,7 @@ export default function HomePage() {
             </h2>
           </div>
 
-          {/* --- REVEALED WHAT I DO SECTION --- */}
+          {/* --- REVEALED WHAT I DO SECTION ( USE LESS JUST THERE TO FILL OUT STUFF--- */}
           <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
            
               <div className="relative w-screen h-[100px] flex items-center">
