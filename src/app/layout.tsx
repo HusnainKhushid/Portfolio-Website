@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={oswald.className}>{children}</body>
+      <body className={`${oswald.className} overflow-x-hidden`}>{children}</body>
     </html>
   );
 }

@@ -19,13 +19,17 @@
   }
 }
 
-body {
+html, body {
   background: var(--background);
   color: var(--foreground);
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .reveal-text {
-  @apply text-transparent bg-clip-text;
+  color: transparent;
+  background-clip: text;
   background: linear-gradient(
     to right,
     rgb(0, 0, 0) 50%,
