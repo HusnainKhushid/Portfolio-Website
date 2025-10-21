@@ -64,5 +64,21 @@ html, body {
     -webkit-mask-size: 100% 0%;
     mask-size: 100% 0%;
   }
+  
+  /* Navigation item animation */
+  .nav-item {
+    position: relative;
+    display: inline-block;
+    transition: color 0.3s ease;
+    padding-bottom: 5px;
+  }
+  
+  /* The underline element will be created and animated with GSAP */
+  .nav-underline {
+    position: absolute;
+    bottom: -2px;
+    height: 1px;
+    background-color: #EB5939;
+  }
 }
 
