@@ -154,14 +154,19 @@ export default function HomePage() {
     const videoYTo = video
       ? gsap.quickTo(video, "y", { duration: 0.28, ease: "none" })
       : () => {};
+
     const cursorXTo = gsap.quickTo(reveal, "--cursor-x", {
       duration: 0.25,
       ease: "slow(0.1, 0.4, true)",
     });
+
+
     const cursorYTo = gsap.quickTo(reveal, "--cursor-y", {
       duration: 0.25,
       ease: "slow(0.1, 0.4, true)",
     });
+
+
     const maskScaleTo = gsap.quickTo(reveal, "--mask-scale", {
       duration: 0.3,
       ease: "power2.out",
@@ -431,23 +436,6 @@ export default function HomePage() {
       );
     }
 
-    // --- 9. BANNER PARALLAX ANIMATION ---
-    const bannerElement = document.querySelector(".parallax-banner");
-    if (bannerElement) {
-      gsap.fromTo(bannerElement, {
-        y: "-30%", // Start position - moved up
-      }, {
-        y: "0%", // End position - perfect fit
-        ease: "none",
-        scrollTrigger: {
-          trigger: bannerElement.parentElement?.parentElement,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.5,
-        },
-      });
-    }
-
     // --- 10. CLEANUP ---
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
@@ -684,35 +672,32 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* --- NEW EMPTY SECTION --- */}
-        <div className="w-full h-[100vh] flex flex-col items-center justify-center relative overflow-hidden" data-mask-size="100">
-          {/* Parallax Background Image */}
-          <div className="absolute inset-0 w-full h-full -z-10">
+
+
+        {/* --- MOTTO SECTION --- */}
+        <div className="w-full h-[100vh] flex flex-col items-center justify-center relative overflow-hidden">
+          {/* Simple Background Image */}
+          <div className="absolute inset-0 w-full h-full">
             <Image
-              src="/banner-bottom-1200.jpg"
+              src="/this2.png"
               alt="Banner Background"
               fill
-              className="object-cover parallax-banner"
-              style={{ transform: 'translateY(-20%)' }}
+              className="object-cover"
               priority
             />
           </div>
           
-          {/* Section title positioned at top */}
-          <div className="relative w-screen h-[100px] flex items-center z-10">
-                <span className="absolute left-1/8 pt-40 text-2xl text-[#D9D9D9] font-semibold tracking-[0.3em]">
-                  MY MOTTO
-                </span>
-          </div>
-          
-          {/* Empty content area - can be filled with content later */}
-          <div className="flex items-center justify-center h-full z-10">
-            <div className="text-center">
-              <h2 className="text-[80px] font-bold text-[#D9D9D9]">
-                GOOD DESIGN
+          {/* Section content area */}
+          <div className="flex items-center justify-center h-full w-full z-10 relative">
+            <div className="text-center w-full">
+              <div className="mb-6 text-2xl text-[#b7ab98] font-semibold tracking-[0.1em]">
+                MY MOTTO
+              </div>
+              <h2 className="text-[100px] font-bold text-[#b7ab98] tracking-[-0.02em] leading-[0.9em]" data-mask-size="1200">
+                <span data-mask-size="1200"> <span className="text-[#EB5939]">GOOD </span> DESIGN</span>
               </h2>
-              <h2 className="text-[80px] font-bold text-[#D9D9D9]">
-                IS HONEST
+              <h2 className="text-[100px] font-bold text-[#b7ab98] tracking-[-0.02em]" data-mask-size="1200">
+                <span data-mask-size="1200">IS <span className="text-[#EB5939]">HONEST </span></span>
               </h2>
             </div>
           </div>
@@ -846,24 +831,20 @@ export default function HomePage() {
 
           </div>
 
-          {/* --- REVEALED NEW EMPTY SECTION --- */}
-          <div className="w-full h-[100vh] flex flex-col items-center justify-center bg-[#EB5939]">
-            {/* Section title positioned at top */}
-            <div className="relative w-screen h-[100px] flex items-center">
-              <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
-                MY MOTTO
-              </span>
-            </div>
-            
+          {/* --- REVEALED Motto Section --- */}
+          <div className="w-full h-[100vh] flex flex-col items-center justify-center bg-[#EB5939] relative">
             {/* Revealed content area */}
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <h2 className="text-[80px] font-bold text-black">
-                  TEST MY MOTTO
+            <div className="flex items-center justify-center h-full w-full z-10 relative">
+              <div className="text-center w-full">
+                <div className="mb-6 text-2xl text-black font-semibold tracking-[0.1em]">
+                  MY MOTTO
+                </div>
+                <h2 className="text-[100px] font-bold text-black tracking-[-0.02em] leading-[0.9em]">
+                  <span>NOT ALL GOOD DESIGN</span>
                 </h2>
-                <p className="text-2xl text-black mt-4">
-                  This is the revealed version of the new section
-                </p>
+                <h2 className="text-[100px] font-bold text-black tracking-[-0.02em]">
+                  <span>IS HONEST</span>
+                </h2>
               </div>
             </div>
           </div>
