@@ -82,3 +82,12 @@ html, body {
   }
 }
 
+/* Motto word animation initial state */
+.motto-word {
+  opacity: 0;
+  transform: translateY(30px);
+  will-change: transform, opacity;
+  display: inline-block;
+  vertical-align: top;
+}
+

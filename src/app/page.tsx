@@ -47,6 +47,7 @@ export default function HomePage() {
   const showreelVideoRef = useRef<HTMLVideoElement>(null);
   const revealRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const mottoRef = useRef<HTMLDivElement>(null);
   const lottieRef = useRef<HTMLDivElement>(null);
   const lottie2Ref = useRef<HTMLDivElement>(null);
   const visualMaskRef = useRef<HTMLDivElement>(null);
@@ -235,6 +236,30 @@ export default function HomePage() {
         },
       });
     });
+
+    // --- 5b. MOTTO WORDS ENTRY ANIMATION ---
+    if (mottoRef && mottoRef.current) {
+      const words = mottoRef.current.querySelectorAll('.motto-word');
+      if (words.length) {
+        gsap.fromTo(words, {
+          y: 30,
+          opacity: 0
+        }, {
+          y: 0,
+          opacity: 1,
+          stagger: 0.08,
+          duration: 0.6,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: mottoRef.current,
+            start: 'top 80%',
+            end: 'bottom 100%',
+            toggleActions: 'play none none reverse',
+            // markers: true,
+          }
+        });
+      }
+    }
     
     // --- NAVIGATION HOVER ANIMATION ---
     // Using a simple, reliable underline animation
@@ -679,7 +704,7 @@ export default function HomePage() {
           {/* Simple Background Image */}
           <div className="absolute inset-0 w-full h-full">
             <Image
-              src="/this2.png"
+              src="/this2.jpg"
               alt="Banner Background"
               fill
               className="object-cover"
@@ -689,15 +714,17 @@ export default function HomePage() {
           
           {/* Section content area */}
           <div className="flex items-center justify-center h-full w-full z-10 relative">
-            <div className="text-center w-full">
+            <div ref={mottoRef} className="text-center w-full">
               <div className="mb-6 text-2xl text-[#b7ab98] font-semibold tracking-[0.1em]">
                 MY MOTTO
               </div>
-              <h2 className="text-[100px] font-bold text-[#b7ab98] tracking-[-0.02em] leading-[0.9em]" data-mask-size="1200">
-                <span data-mask-size="1200"> <span className="text-[#EB5939]">GOOD </span> DESIGN</span>
+              <h2 className="text-[100px] font-bold text-[#b7ab98] tracking-[-0.02em] leading-[0.9em] m-0">
+                <span className="motto-word inline-block text-[#EB5939]" data-mask-size="1200">GOOD</span>
+                <span className="motto-word inline-block ml-4" data-mask-size="1200">DESIGN</span>
               </h2>
-              <h2 className="text-[100px] font-bold text-[#b7ab98] tracking-[-0.02em]" data-mask-size="1200">
-                <span data-mask-size="1200">IS <span className="text-[#EB5939]">HONEST </span></span>
+              <h2 className="text-[100px] font-bold text-[#b7ab98] tracking-[-0.02em] leading-[0.9em] m-0">
+                <span className="motto-word inline-block" data-mask-size="1200">IS</span>
+                <span className="motto-word inline-block ml-4 text-[#EB5939]" data-mask-size="1200">HONEST</span>
               </h2>
             </div>
           </div>
@@ -839,10 +866,10 @@ export default function HomePage() {
                 <div className="mb-6 text-2xl text-black font-semibold tracking-[0.1em]">
                   MY MOTTO
                 </div>
-                <h2 className="text-[100px] font-bold text-black tracking-[-0.02em] leading-[0.9em]">
+                <h2 className="text-[100px] font-bold text-black tracking-[-0.02em] leading-[0.9em] m-0">
                   <span>NOT ALL GOOD DESIGN</span>
                 </h2>
-                <h2 className="text-[100px] font-bold text-black tracking-[-0.02em]">
+                <h2 className="text-[100px] font-bold text-black tracking-[-0.02em] leading-[0.9em] m-0">
                   <span>IS HONEST</span>
                 </h2>
               </div>
