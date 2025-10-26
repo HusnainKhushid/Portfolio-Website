@@ -54,6 +54,7 @@ export default function HomePage() {
   const motionMaskRef = useRef<HTMLDivElement>(null);
   const productMaskRef = useRef<HTMLDivElement>(null);
   const promoMaskRef = useRef<HTMLDivElement>(null);
+  const mottoImageRef = useRef<HTMLDivElement>(null);
 
   // --- State for Lottie animation data ---
   const [lottieData, setLottieData] = useState<LottieData | null>(null);
@@ -156,6 +157,10 @@ export default function HomePage() {
       ? gsap.quickTo(video, "y", { duration: 0.28, ease: "none" })
       : () => {};
 
+    const mottoYTo = mottoImageRef.current
+  ? gsap.quickTo(mottoImageRef.current, "y", { duration: 0.45, ease: "power1.out" })
+      : () => {};
+
     const cursorXTo = gsap.quickTo(reveal, "--cursor-x", {
       duration: 0.25,
       ease: "slow(0.1, 0.4, true)",
@@ -238,7 +243,7 @@ export default function HomePage() {
     });
 
     // --- 5b. MOTTO WORDS ENTRY ANIMATION ---
-    if (mottoRef && mottoRef.current) {
+  if (mottoRef && mottoRef.current) {
       const words = mottoRef.current.querySelectorAll('.motto-word');
       if (words.length) {
         gsap.fromTo(words, {
@@ -247,8 +252,8 @@ export default function HomePage() {
         }, {
           y: 0,
           opacity: 1,
-          stagger: 0.08,
-          duration: 0.6,
+      stagger: 0.06,
+      duration: 0.45,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: mottoRef.current,
@@ -377,6 +382,23 @@ export default function HomePage() {
     setupMaskAnimation(motionMaskRef);
     setupMaskAnimation(productMaskRef);
     setupMaskAnimation(promoMaskRef);
+
+    // --- MOTTO IMAGE PARALLAX (starts when motto top hits bottom of viewport) ---
+    if (mottoImageRef.current) {
+      // reduce the shift to make parallax subtler
+      const mottoShift = window.innerHeight * 0.12; // smaller movement for subtle effect
+      ScrollTrigger.create({
+        trigger: mottoImageRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          // progress goes 0 -> 1 while the element passes through the viewport
+          const y = -self.progress * mottoShift; // negative to move up as we scroll down
+          mottoYTo(y);
+        },
+      });
+    }
 
     // --- 7. LOTTIE ANIMATION SCROLLTRIGGER (OPTIMIZED FOR SMOOTH PERFORMANCE) ---
     // Control Lottie animation with GSAP ScrollTrigger
@@ -509,7 +531,7 @@ export default function HomePage() {
                 muted
                 playsInline
               >
-                <source src="/hero.mp4" type="video/mp4" />
+                <source src="/g3.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -608,7 +630,7 @@ export default function HomePage() {
             <div className="absolute ">
               <div className="relative w-screen h-[100px] flex items-center">
                 <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
-                  WHAT I DO
+                  
                 </span>
               </div>
               {/* * reveal section { special case , <motionMaskRef> has to be in same div} * */}
@@ -702,14 +724,16 @@ export default function HomePage() {
         {/* --- MOTTO SECTION --- */}
         <div className="w-full h-[100vh] flex flex-col items-center justify-center relative overflow-hidden">
           {/* Simple Background Image */}
-          <div className="absolute inset-0 w-full h-full">
+          <div className="motto-wrap absolute inset-0 w-full h-full" style={{ zIndex: 10 }}>
+            <div ref={mottoImageRef} className="absolute inset-0 w-full h-full motto-image">
             <Image
-              src="/this2.jpg"
+              src="/mymotto.jpg"
               alt="Banner Background"
               fill
               className="object-cover"
               priority
             />
+            </div>
           </div>
           
           {/* Section content area */}
@@ -754,9 +778,10 @@ export default function HomePage() {
         {/* ================================================================================================= */}
         <div
           ref={revealRef}
-          className="reveal absolute top-0 left-0 w-full h-full pointer-events-none z-20"
+          className="reveal absolute top-0 left-0 w-full h-full pointer-events-none"
           style={{
             opacity: 0, // Start fully transparent
+            zIndex: 2,
             maskImage: 'url("/test-mask.svg")',
             maskRepeat: "no-repeat",
             maskSize: "calc(var(--mask-scale, 0) * 50px)",
@@ -849,7 +874,7 @@ export default function HomePage() {
           </div>
 
           {/* --- REVEALED SHOWREEL SECTION --- */}
-          <div className="w-full min-h-screen items-center justify-center bg-[#EB5939]">
+          <div className="w-full min-h-screen items-center justify-center bg-[#EB5939] ">
           <div className="relative top-0 left-0 w-full h-[100px] flex items-center">
             <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em] test">
               SHOWREEL
@@ -861,7 +886,7 @@ export default function HomePage() {
           {/* --- REVEALED Motto Section --- */}
           <div className="w-full h-[100vh] flex flex-col items-center justify-center bg-[#EB5939] relative">
             {/* Revealed content area */}
-            <div className="flex items-center justify-center h-full w-full z-10 relative">
+            <div className="flex items-center justify-center h-full w-full relative">
               <div className="text-center w-full">
                 <div className="mb-6 text-2xl text-black font-semibold tracking-[0.1em]">
                   MY MOTTO

@@ -91,3 +91,18 @@ html, body {
   vertical-align: top;
 }
 
+/* Parallax depth helpers for motto image */
+.motto-wrap {
+  perspective: 1200px; /* creates depth for children */
+  -webkit-perspective: 1200px;
+}
+
+.motto-image {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  /* sit slightly back on the z axis - subtle */
+  transform: translateZ(-40px) scale(1.03);
+  -webkit-transform: translateZ(-40px) scale(1.03);
+  will-change: transform;
+}
+
