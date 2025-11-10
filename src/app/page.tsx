@@ -722,13 +722,14 @@ export default function HomePage() {
 
 
         {/* --- MOTTO SECTION --- */}
-        <div className="w-full h-[100vh] flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="w-full h-[100vh] flex flex-col items-center justify-center relative overflow-hidden" >
           {/* Simple Background Image */}
-          <div className="motto-wrap absolute inset-0 w-full h-full" style={{ zIndex: 10 }}>
+          <div className="motto-wrap absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
             <div ref={mottoImageRef} className="absolute inset-0 w-full h-full motto-image">
             <Image
               src="/mymotto.jpg"
               alt="Banner Background"
+              
               fill
               className="object-cover"
               priority
@@ -737,7 +738,7 @@ export default function HomePage() {
           </div>
           
           {/* Section content area */}
-          <div className="flex items-center justify-center h-full w-full z-10 relative">
+          <div className="flex items-center justify-center h-full w-full z-1 relative">
             <div ref={mottoRef} className="text-center w-full">
               <div className="mb-6 text-2xl text-[#b7ab98] font-semibold tracking-[0.1em]">
                 MY MOTTO
@@ -886,7 +887,7 @@ export default function HomePage() {
           {/* --- REVEALED Motto Section --- */}
           <div className="w-full h-[100vh] flex flex-col items-center justify-center bg-[#EB5939] relative">
             {/* Revealed content area */}
-            <div className="flex items-center justify-center h-full w-full relative">
+            <div className="flex items-center justify-center h-full w-full z-1 relative">
               <div className="text-center w-full">
                 <div className="mb-6 text-2xl text-black font-semibold tracking-[0.1em]">
                   MY MOTTO
