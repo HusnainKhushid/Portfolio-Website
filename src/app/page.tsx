@@ -7,10 +7,11 @@ import Lenis from "@studio-freight/lenis";
 import { useState, useEffect } from "react";
 import { useLottie } from "lottie-react";
 import Image from "next/image";
+import AboutScene from "../components/AboutScene";
 
 // A simplified type for a Lottie asset.
 interface LottieAsset {
-  id: string; 
+  id: string;
   // Other properties can exist on an asset.
   [key: string]: unknown;
 }
@@ -71,7 +72,7 @@ export default function HomePage() {
   }, []);
 
   // --- Lottie component setup with performance optimizations ---
-  const lottieOptions = { 
+  const lottieOptions = {
     animationData: lottieData || {},
     loop: false,
     autoplay: false, // Disable autoplay to let GSAP control it
@@ -89,7 +90,7 @@ export default function HomePage() {
   });
 
   // --- Second Lottie component setup for data2.json ---
-  const lottie2Options = { 
+  const lottie2Options = {
     animationData: lottieData2 || {},
     loop: true, // Loop for continuous play
     autoplay: false, // Will be controlled by ScrollTrigger
@@ -111,13 +112,13 @@ export default function HomePage() {
     const video = showreelVideoRef.current;
     if (!video) return;
 
-          try {
-        if (!document.fullscreenElement) {
-          // Enter fullscreen
-          await video.requestFullscreen();
-          video.controls = true;
-        }
-      } catch (error) {
+    try {
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        await video.requestFullscreen();
+        video.controls = true;
+      }
+    } catch (error) {
       console.error('Error attempting to enable fullscreen:', error);
     }
   };
@@ -155,11 +156,11 @@ export default function HomePage() {
     // --- 2. HIGH-PERFORMANCE GSAP SETTERS ---
     const videoYTo = video
       ? gsap.quickTo(video, "y", { duration: 0.28, ease: "none" })
-      : () => {};
+      : () => { };
 
     const mottoYTo = mottoImageRef.current
-  ? gsap.quickTo(mottoImageRef.current, "y", { duration: 0.45, ease: "power1.out" })
-      : () => {};
+      ? gsap.quickTo(mottoImageRef.current, "y", { duration: 0.45, ease: "power1.out" })
+      : () => { };
 
     const cursorXTo = gsap.quickTo(reveal, "--cursor-x", {
       duration: 0.25,
@@ -243,7 +244,7 @@ export default function HomePage() {
     });
 
     // --- 5b. MOTTO WORDS ENTRY ANIMATION ---
-  if (mottoRef && mottoRef.current) {
+    if (mottoRef && mottoRef.current) {
       const words = mottoRef.current.querySelectorAll('.motto-word');
       if (words.length) {
         gsap.fromTo(words, {
@@ -252,8 +253,8 @@ export default function HomePage() {
         }, {
           y: 0,
           opacity: 1,
-      stagger: 0.06,
-      duration: 0.45,
+          stagger: 0.06,
+          duration: 0.45,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: mottoRef.current,
@@ -265,19 +266,19 @@ export default function HomePage() {
         });
       }
     }
-    
+
     // --- NAVIGATION HOVER ANIMATION ---
     // Using a simple, reliable underline animation
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach((item) => {
       const el = item as HTMLElement;
-      
+
       // Create the underline element if it doesn't exist
       if (!el.querySelector('.nav-underline')) {
         const underline = document.createElement('span');
         underline.className = 'nav-underline';
         el.appendChild(underline);
-        
+
         // Set initial state
         gsap.set(underline, {
           width: 0,
@@ -288,33 +289,33 @@ export default function HomePage() {
           backgroundColor: "#EB5939",
         });
       }
-      
+
       // Simple hover animations
       el.addEventListener('mouseenter', () => {
-        gsap.to(el, { 
-          color: "#EB5939", 
-          duration: 0.3, 
-          ease: "power1.out" 
+        gsap.to(el, {
+          color: "#EB5939",
+          duration: 0.3,
+          ease: "power1.out"
         });
-        gsap.to(el.querySelector('.nav-underline'), { 
-          width: "100%", 
-          left: "0", 
-          duration: 0.3, 
-          ease: "power1.out" 
+        gsap.to(el.querySelector('.nav-underline'), {
+          width: "100%",
+          left: "0",
+          duration: 0.3,
+          ease: "power1.out"
         });
       });
-      
+
       el.addEventListener('mouseleave', () => {
-        gsap.to(el, { 
-          color: "#b7ab98", 
-          duration: 0.3, 
-          ease: "power1.out" 
+        gsap.to(el, {
+          color: "#b7ab98",
+          duration: 0.3,
+          ease: "power1.out"
         });
-        gsap.to(el.querySelector('.nav-underline'), { 
-          width: 0, 
-          left: "50%", 
-          duration: 0.3, 
-          ease: "power1.out" 
+        gsap.to(el.querySelector('.nav-underline'), {
+          width: 0,
+          left: "50%",
+          duration: 0.3,
+          ease: "power1.out"
         });
       });
     });
@@ -405,11 +406,11 @@ export default function HomePage() {
     if (lottieRef.current && lottieObj && lottieObj.animationItem) {
       const animation = lottieObj.animationItem;
       const totalFrames = animation.totalFrames || 300; // Fallback to 300 frames
-      
+
       ScrollTrigger.create({
         trigger: lottieRef.current.parentElement,
         start: "top bottom",
-        end: "bottom top", 
+        end: "bottom top",
         scrub: 1.2, // Slightly higher for smoother feel
         invalidateOnRefresh: true, // Recalculate on window resize
         refreshPriority: -1, // Lower refresh priority for better performance
@@ -417,25 +418,25 @@ export default function HomePage() {
           // SMOOTH FRAME INTERPOLATION - No Math.floor for buttery smooth animation!
           const frame = self.progress * (totalFrames - 1); // -1 because frames are 0-indexed
           animation.goToAndStop(frame, true);
-          
+
           // Control data2.json overlay opacity and scale based on scroll progress
           if (lottie2Ref.current) {
             let overlayOpacity = 0;
             let overlayScale = 0.4; // Start smaller
-            
+
             if (self.progress >= 0.90) {
               // Fade in and scale up when progress is 90% or more
               const progressNormalized = (self.progress - 0.90) / 0.10; // Maps 0.90-1.0 to 0-1
               overlayOpacity = progressNormalized;
               overlayScale = 0.4 + (progressNormalized * 0.6); // Scale from 0.8 to 1.0
             }
-            
-            gsap.set(lottie2Ref.current, { 
+
+            gsap.set(lottie2Ref.current, {
               opacity: overlayOpacity,
               scale: overlayScale
             });
           }
-          
+
           // Optional: Uncomment for debugging (but remove for production performance)
           // console.log(`Smooth Progress: ${(self.progress * 100).toFixed(1)}% - Frame: ${frame.toFixed(2)}`);
         },
@@ -457,10 +458,10 @@ export default function HomePage() {
     // --- SECOND LOTTIE ANIMATION CONTROL (SIMPLE OVERLAY) ---
     if (lottie2Ref.current && lottie2Obj && lottie2Obj.animationItem) {
       const secondAnimation = lottie2Obj.animationItem;
-      
+
       // Start the second animation immediately and keep it looping
       secondAnimation.play();
-      
+
       // Start with overlay hidden (opacity will be controlled by scroll progress)
       gsap.set(lottie2Ref.current, { opacity: 0 });
     }
@@ -502,11 +503,11 @@ export default function HomePage() {
       <div className={`main relative`}>
         {/* Navigation Menu (Sticky) */}
         <nav className="fixed top-10 right-10 z-20">
-          <ul  data-mask-size="0" className="flex flex-col items-end space-y-2">
+          <ul data-mask-size="0" className="flex flex-col items-end space-y-2">
             {["ABOUT", "WORK", "CONTACT"].map((item) => (
               <li key={item}>
-                <a 
-                  href={`#${item.toLowerCase()}`} 
+                <a
+                  href={`#${item.toLowerCase()}`}
                   className="text-[#b7ab98] hover:text-[#EB5939] text-xl tracking-[0.1em] font-bold relative nav-item"
                 >
                   {item}
@@ -562,8 +563,9 @@ export default function HomePage() {
           </div>
 
           {/* --- ABOUT ME SECTION --- */}
-          <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9]">
-            <div className="relative w-screen h-[100px] flex items-center">
+          <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative overflow-hidden">
+            <AboutScene />
+            <div className="relative w-screen h-[100px] flex items-center z-10">
               <span
                 data-mask-size="1200"
                 className="absolute left-1/8 text-2xl text-[#383838] font-semibold tracking-[0.3em]"
@@ -574,7 +576,7 @@ export default function HomePage() {
             <h2
               data-mask-size="1200"
               ref={textRef}
-              className="text-8xl font-bold text-gray-800 max-w-[90%] text-center"
+              className="text-8xl font-bold text-gray-800 max-w-[90%] text-center relative z-10"
             >
               <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">
                 I’m a visual designer who brings ideas to life through{" "}
@@ -630,13 +632,13 @@ export default function HomePage() {
             <div className="absolute ">
               <div className="relative w-screen h-[100px] flex items-center">
                 <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
-                  
+
                 </span>
               </div>
               {/* * reveal section { special case , <motionMaskRef> has to be in same div} * */}
               <div className="w-full flex justify-center">
                 <div className="w-[100%]">
-                 <div
+                  <div
                     ref={visualMaskRef}
                     className="border-t border-gray-500 bg-[#EB5939] mask-reveal flex items-center justify-between px-[15%]"
                   >
@@ -647,7 +649,7 @@ export default function HomePage() {
                     <p className="text-[30px] font-medium text-black/90">
                       <span data-mask-size="0">DESIGN</span>
                     </p>
-                 </div>
+                  </div>
 
                   <div
                     ref={motionMaskRef}
@@ -699,7 +701,7 @@ export default function HomePage() {
               SHOWREEL
             </span>
           </div>
-          
+
           {/* Video background that scales with scroll */}
           <div className="absolute inset-0 w-full h-full">
             <video
@@ -714,7 +716,6 @@ export default function HomePage() {
               onClick={handleShowreelClick}
             >
               <source src="/showreel.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
             </video>
           </div>
         </div>
@@ -726,17 +727,17 @@ export default function HomePage() {
           {/* Simple Background Image */}
           <div className="motto-wrap absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
             <div ref={mottoImageRef} className="absolute inset-0 w-full h-full motto-image">
-            <Image
-              src="/mymotto.jpg"
-              alt="Banner Background"
-              
-              fill
-              className="object-cover"
-              priority
-            />
+              <Image
+                src="/mymotto.jpg"
+                alt="Banner Background"
+
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
-          
+
           {/* Section content area */}
           <div className="flex items-center justify-center h-full w-full z-1 relative">
             <div ref={mottoRef} className="text-center w-full">
@@ -756,17 +757,17 @@ export default function HomePage() {
         </div>
 
         {/* --- LOTTIE ANIMATION SECTION --- */}
-        <div className="w-full min-h-[400vh] bg-white relative" >
+        <div className="w-full min-h-[100vh] bg-white relative" >
           <div className="w-full sticky top-0 h-screen relative">
             {/* First Lottie Animation (data.json) */}
             <div ref={lottieRef} className="w-full h-full">
               {lottieData && lottieObj.View}
             </div>
-            
+
             {/* Second Lottie Animation (data2.json) - Overlay */}
-            <div 
-              ref={lottie2Ref} 
-              className="absolute inset-0 w-full h-full z-10 pointer-events-none opacity-0"
+            <div
+              ref={lottie2Ref}
+              className="absolute inset-0 w-full h-full pointer-events-none opacity-0"
               style={{ backgroundColor: 'transparent' }}
             >
               {lottieData2 && lottie2Obj.View}
@@ -782,7 +783,7 @@ export default function HomePage() {
           className="reveal absolute top-0 left-0 w-full h-full pointer-events-none"
           style={{
             opacity: 0, // Start fully transparent
-            zIndex: 2,
+            zIndex: 15,
             maskImage: 'url("/test-mask.svg")',
             maskRepeat: "no-repeat",
             maskSize: "calc(var(--mask-scale, 0) * 50px)",
@@ -841,46 +842,46 @@ export default function HomePage() {
 
           {/* --- REVEALED WHAT I DO SECTION ( USE LESS JUST THERE TO FILL OUT STUFF--- */}
           <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
-           
-              <div className="relative w-screen h-[100px] flex items-center">
-                <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
-                  WHAT I DO
-                </span>
-              </div>
 
-              <div className="w-full flex justify-center">
-                <div className="w-[100%]">
-                  <div className="border-t-1 border-gray-500">
-                    <p className="text-[120px] font-bold text-black ml-[15%]">
-                      <span data-mask-size="0"> VISUAL</span>
-                    </p>
-                  </div>
-                  <div className="border-t-1 border-gray-500">
-                    <p className="text-[120px] font-bold text-black ml-[15%]">
-                      <span data-mask-size="0"> MOTION</span>
-                    </p>
-                  </div>
-                  <div className="border-t-1 border-gray-500">
-                    <p className="text-[120px] font-bold text-black ml-[15%]">
-                      <span data-mask-size="0">PRODUCT</span>
-                    </p>
-                  </div>
-                  <div className="border-t-1 border-gray-500 border-b-1">
-                    <p className="text-[120px] font-bold text-black ml-[15%]">
-                      <span data-mask-size="0">PROMO</span>
-                    </p>
-                  </div>
+            <div className="relative w-screen h-[100px] flex items-center">
+              <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
+                WHAT I DO
+              </span>
+            </div>
+
+            <div className="w-full flex justify-center">
+              <div className="w-[100%]">
+                <div className="border-t-1 border-gray-500">
+                  <p className="text-[120px] font-bold text-black ml-[15%]">
+                    <span data-mask-size="0"> VISUAL</span>
+                  </p>
+                </div>
+                <div className="border-t-1 border-gray-500">
+                  <p className="text-[120px] font-bold text-black ml-[15%]">
+                    <span data-mask-size="0"> MOTION</span>
+                  </p>
+                </div>
+                <div className="border-t-1 border-gray-500">
+                  <p className="text-[120px] font-bold text-black ml-[15%]">
+                    <span data-mask-size="0">PRODUCT</span>
+                  </p>
+                </div>
+                <div className="border-t-1 border-gray-500 border-b-1">
+                  <p className="text-[120px] font-bold text-black ml-[15%]">
+                    <span data-mask-size="0">PROMO</span>
+                  </p>
                 </div>
               </div>
+            </div>
           </div>
 
           {/* --- REVEALED SHOWREEL SECTION --- */}
           <div className="w-full min-h-screen items-center justify-center bg-[#EB5939] ">
-          <div className="relative top-0 left-0 w-full h-[100px] flex items-center">
-            <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em] test">
-              SHOWREEL
-            </span>
-          </div>
+            <div className="relative top-0 left-0 w-full h-[100px] flex items-center">
+              <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em] test">
+                SHOWREEL
+              </span>
+            </div>
 
           </div>
 
