@@ -20,7 +20,6 @@ const ModelView: React.FC<ModelViewProps> = ({
     scale = 1,
     position = [0, 0, 0],
     rotation = [0, 0, 0],
-    floatIntensity = 1,
     rotationSpeed = 0.1,
     scrollY = 0
 }) => {
