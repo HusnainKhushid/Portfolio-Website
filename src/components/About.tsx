@@ -9,92 +9,113 @@ interface AboutProps {
     variant?: "default" | "reveal";
 }
 
+/* ─── Text segments: { text, hl? } — hl = highlighted word ──────── */
+type Seg = { text: string; hl?: boolean };
+
+const segments: Seg[] = [
+    { text: "I'm a " },
+    { text: "visual designer", hl: true },
+    { text: " who brings ideas to life through " },
+    { text: "motion", hl: true },
+    { text: ", " },
+    { text: "design", hl: true },
+    { text: " and " },
+    { text: "storytelling", hl: true },
+    { text: ". From bold " },
+    { text: "animations", hl: true },
+    { text: " to intuitive " },
+    { text: "interfaces", hl: true },
+    { text: ", I help brands express who they " },
+    { text: "are", hl: true },
+    { text: " — and why they " },
+    { text: "matter", hl: true },
+    { text: "." },
+];
+
+const ORANGE = "#EB5939";
+const OFF_WHITE = "#D9D9D9";
+
+/*
+ * Fluid font size:
+ *   Mobile  (~375px) → ~24px
+ *   Tablet  (~768px) → ~38px
+ *   Desktop (~1440px) → 80px (5rem)
+ */
+const fluidText = "text-[clamp(1.5rem,5vw,5rem)]";
+
 export default function About({ variant = "default" }: AboutProps) {
-    const textRef = useRef<HTMLHeadingElement>(null);
+    const textRef = useRef<HTMLParagraphElement>(null);
 
     useLayoutEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- TEXT REVEAL ANIMATION ---
-        // We only attach this animation in one layer (usually default) or both?
-        // In page.tsx, it selected ".reveal-text" globally. Ideally we scope it.
-        // If we have duplicates (one hidden, one reveal layer), we might double animate.
-        // But typically the reveal layer is hidden by default mask.
-        // Let's animate both to be safe and synced.
-
         if (textRef.current) {
-            const lines = textRef.current.querySelectorAll(".reveal-text");
-            lines.forEach((line) => {
-                gsap.to(line, {
-                    backgroundPositionX: "0%",
-                    scrollTrigger: {
-                        trigger: line,
-                        start: "top 80%",
-                        end: "bottom 20%",
-                        scrub: 1,
-                    },
-                });
+            gsap.to(textRef.current, {
+                backgroundPositionX: "0%",
+                scrollTrigger: {
+                    trigger: textRef.current,
+                    start: "top 80%",
+                    end: "top 30%",
+                    scrub: 1,
+                },
             });
         }
     }, []);
 
+    /* ─── REVEAL layer ───────────────────────────────────────────── */
     if (variant === "reveal") {
         return (
-            <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
-                <div className="relative w-screen h-[100px] flex items-center">
-                    <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
+            <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939] px-4 sm:px-8">
+                <div className="relative w-full h-[60px] sm:h-[80px] md:h-[100px] flex items-center">
+                    <span className="absolute left-[12.5%] text-sm sm:text-lg md:text-2xl text-black font-semibold tracking-[0.3em]">
                         ABOUT ME
                     </span>
                 </div>
-                <h2 className="text-8xl font-bold text-black max-w-[90%] text-center">
-                    <p className="mb-[-16] leading-tight text-[80px] font-bold">
-                        I’m a visual designer who brings ideas to life through{" "}
-                    </p>
-                    <p className="mb-[-16] leading-tight text-[80px] font-bold">
-                        motion, design and storytelling.From bold{" "}
-                    </p>
-                    <p className="mb-[-16] leading-tight text-[80px] font-bold">
-                        animations to intuitive interfaces,I help brands express{" "}
-                    </p>
-                    <p className="mb-[-16] leading-tight text-[80px] font-bold">
-                        {" "}
-                        who they are — and why they matter.
-                    </p>
-                </h2>
+
+                <p className={`font-bold text-black w-[90%] text-center ${fluidText} leading-[1.2]`}>
+                    {segments.map((seg, i) =>
+                        seg.hl ? (
+                            <span key={i} style={{ color: OFF_WHITE }}>
+                                {seg.text}
+                            </span>
+                        ) : (
+                            <span key={i}>{seg.text}</span>
+                        )
+                    )}
+                </p>
             </div>
         );
     }
 
+    /* ─── DEFAULT layer ──────────────────────────────────────────── */
     return (
-        <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative overflow-hidden">
+        <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative overflow-hidden px-4 sm:px-8">
             <AboutScene />
-            <div className="relative w-screen h-[100px] flex items-center z-10">
+
+            <div className="relative w-full h-[60px] sm:h-[80px] md:h-[100px] flex items-center z-10">
                 <span
                     data-mask-size="1200"
-                    className="absolute left-1/8 text-2xl text-[#383838] font-semibold tracking-[0.3em]"
+                    className="absolute left-[12.5%] text-sm sm:text-lg md:text-2xl text-[#383838] font-semibold tracking-[0.3em]"
                 >
                     ABOUT ME
                 </span>
             </div>
-            <h2
+
+            <p
                 data-mask-size="1200"
                 ref={textRef}
-                className="text-8xl font-bold text-gray-800 max-w-[90%] text-center relative z-10"
+                className={`reveal-text font-bold text-gray-800 w-[90%] text-center relative z-10 ${fluidText} leading-[1.2]`}
             >
-                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">
-                    I’m a visual designer who brings ideas to life through{" "}
-                </p>
-                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">
-                    motion, design and storytelling.From bold{" "}
-                </p>
-                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">
-                    animations to intuitive interfaces,I help brands express{" "}
-                </p>
-                <p className="reveal-text mb-[-16] leading-tight text-[80px] font-bold">
-                    {" "}
-                    who they are — and why they matter.
-                </p>
-            </h2>
+                {segments.map((seg, i) =>
+                    seg.hl ? (
+                        <span key={i} style={{ color: ORANGE }}>
+                            {seg.text}
+                        </span>
+                    ) : (
+                        <span key={i}>{seg.text}</span>
+                    )
+                )}
+            </p>
         </div>
     );
 }

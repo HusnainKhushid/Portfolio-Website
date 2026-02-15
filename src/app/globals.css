@@ -19,7 +19,8 @@
   }
 }
 
-html, body {
+html,
+body {
   background: var(--background);
   color: var(--foreground);
   width: 100%;
@@ -30,11 +31,9 @@ html, body {
 .reveal-text {
   color: transparent;
   background-clip: text;
-  background: linear-gradient(
-    to right,
-    rgb(0, 0, 0) 50%,
-    rgb(90, 90, 90) 50%
-  );
+  background: linear-gradient(to right,
+      rgb(0, 0, 0) 50%,
+      rgb(90, 90, 90) 50%);
   background-size: 200% 100%;
   background-position-x: 100%;
   -webkit-background-clip: text;
@@ -53,7 +52,7 @@ html, body {
     mask-size: 100% 0%;
     transition: mask-size 0.5s ease;
   }
-  
+
   .mask-reveal {
     -webkit-mask-image: linear-gradient(black, black);
     mask-image: linear-gradient(black, black);
@@ -64,7 +63,7 @@ html, body {
     -webkit-mask-size: 100% 0%;
     mask-size: 100% 0%;
   }
-  
+
   /* Navigation item animation */
   .nav-item {
     position: relative;
@@ -72,7 +71,7 @@ html, body {
     transition: color 0.3s ease;
     padding-bottom: 5px;
   }
-  
+
   /* The underline element will be created and animated with GSAP */
   .nav-underline {
     position: absolute;
@@ -93,7 +92,8 @@ html, body {
 
 /* Parallax depth helpers for motto image */
 .motto-wrap {
-  perspective: 1200px; /* creates depth for children */
+  perspective: 1200px;
+  /* creates depth for children */
   -webkit-perspective: 1200px;
 }
 
@@ -105,4 +105,3 @@ html, body {
   -webkit-transform: translateZ(-40px) scale(1.03);
   will-change: transform;
 }
-
