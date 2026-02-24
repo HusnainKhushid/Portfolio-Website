@@ -41,7 +41,7 @@ const OFF_WHITE = "#D9D9D9";
  *   Tablet  (~768px) → ~38px
  *   Desktop (~1440px) → 80px (5rem)
  */
-const fluidText = "text-[clamp(1.5rem,5vw,5rem)]";
+const fluidText = "text-[clamp(2rem,5vw,5rem)]";
 
 export default function About({ variant = "default" }: AboutProps) {
     const textRef = useRef<HTMLParagraphElement>(null);
@@ -65,7 +65,7 @@ export default function About({ variant = "default" }: AboutProps) {
     /* ─── REVEAL layer ───────────────────────────────────────────── */
     if (variant === "reveal") {
         return (
-            <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939] px-4 sm:px-8">
+            <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center bg-[#EB5939] px-4 sm:px-8">
                 <div className="relative w-full h-[60px] sm:h-[80px] md:h-[100px] flex items-center">
                     <span className="absolute left-[12.5%] text-sm sm:text-lg md:text-2xl text-black font-semibold tracking-[0.3em]">
                         ABOUT ME
@@ -89,7 +89,7 @@ export default function About({ variant = "default" }: AboutProps) {
 
     /* ─── DEFAULT layer ──────────────────────────────────────────── */
     return (
-        <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative overflow-hidden px-4 sm:px-8">
+        <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative overflow-hidden px-4 sm:px-8">
             <AboutScene />
 
             <div className="relative w-full h-[60px] sm:h-[80px] md:h-[100px] flex items-center z-10">

@@ -32,6 +32,8 @@ interface LottieData {
 }
 
 export default function LottieScroll() {
+    const outerRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
     const lottieRef = useRef<HTMLDivElement>(null);
     const lottie2Ref = useRef<HTMLDivElement>(null);
 
@@ -51,13 +53,12 @@ export default function LottieScroll() {
 
     // --- Lottie component setup ---
     const lottieOptions = {
-        animationData: lottieData || {},
+        animationData: lottieData || undefined,
         loop: false,
         autoplay: false,
         renderer: 'svg' as const,
         rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice',
-            progressiveLoad: true,
             hideOnTransparent: true,
             className: 'lottie-svg'
         }
@@ -69,13 +70,12 @@ export default function LottieScroll() {
 
     // --- Second Lottie component setup ---
     const lottie2Options = {
-        animationData: lottieData2 || {},
+        animationData: lottieData2 || undefined,
         loop: true,
         autoplay: false,
         renderer: 'svg' as const,
         rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice',
-            progressiveLoad: true,
             hideOnTransparent: true,
             className: 'lottie-svg-2'
         }
@@ -88,13 +88,16 @@ export default function LottieScroll() {
     useLayoutEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
 
+        if (!outerRef.current || !contentRef.current) return;
+
         // --- LOTTIE ANIMATION SCROLLTRIGGER ---
-        if (lottieRef.current && lottieObj && lottieObj.animationItem) {
+        if (lottieObj && lottieObj.animationItem) {
             const animation = lottieObj.animationItem;
             const totalFrames = animation.totalFrames || 300;
 
+            // Scrub: use the OUTER wrapper as trigger so it spans the full scroll distance
             ScrollTrigger.create({
-                trigger: lottieRef.current.parentElement,
+                trigger: outerRef.current,
                 start: "top bottom",
                 end: "bottom top",
                 scrub: 1.2,
@@ -122,13 +125,13 @@ export default function LottieScroll() {
                 },
             });
 
+            // Pin: pin the CONTENT div (not a sticky element) using the OUTER as trigger
             ScrollTrigger.create({
-                trigger: lottieRef.current.parentElement,
-                start: "center center",
-                end: "bottom top",
-                pin: true,
-                pinSpacing: true,
-                // markers: true,
+                trigger: outerRef.current,
+                start: "top top",
+                end: "bottom bottom",
+                pin: contentRef.current,
+                pinSpacing: false,   // outer already provides the scroll distance
                 refreshPriority: 0,
                 invalidateOnRefresh: true
             });
@@ -140,11 +143,11 @@ export default function LottieScroll() {
             secondAnimation.play();
             gsap.set(lottie2Ref.current, { opacity: 0 });
         }
-    }, [lottieObj, lottie2Obj]); // Added dependencies to re-run if instances change
+    }, [lottieObj, lottie2Obj]);
 
     return (
-        <div className="w-full min-h-[100vh] bg-white relative" >
-            <div className="w-full sticky top-0 h-screen relative">
+        <div ref={outerRef} className="w-full relative" style={{ height: "300vh" }}>
+            <div ref={contentRef} className="w-full h-screen relative">
                 <div ref={lottieRef} className="w-full h-full">
                     {lottieData && lottieObj.View}
                 </div>

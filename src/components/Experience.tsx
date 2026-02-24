@@ -9,7 +9,7 @@ interface ExperienceProps {
 }
 
 /* ── Fluid heading size (same axis as About) ─────────────── */
-const fluidText = "text-[clamp(1.5rem,4.5vw,72px)]";
+const fluidText = "text-[clamp(2rem,5.5vw,72px)]";
 
 /* ── Text segments with highlight support ────────────────── */
 type Seg = { text: string; hl?: boolean };
@@ -101,7 +101,7 @@ export default function Experience({ variant = "default" }: ExperienceProps) {
     /* ── REVEAL LAYER ──────────────────────────────────────── */
     if (variant === "reveal") {
         return (
-            <div className="w-full min-h-screen flex flex-col bg-[#EB5939]">
+            <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col bg-[#EB5939]">
                 <ExperienceContent
                     labelColor="#1a1a1a"
                     bodyClass=""
@@ -114,7 +114,7 @@ export default function Experience({ variant = "default" }: ExperienceProps) {
 
     /* ── DEFAULT LAYER ─────────────────────────────────────── */
     return (
-        <div className="w-full min-h-screen flex flex-col bg-[#131313] relative overflow-hidden">
+        <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col bg-[#131313] relative overflow-hidden">
             <ExperienceContent
                 labelColor="#b7ab98"
                 textRef={textRef}

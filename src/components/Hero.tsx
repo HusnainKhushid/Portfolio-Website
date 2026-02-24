@@ -7,9 +7,12 @@ import { useAutoFitFont } from "../hooks/useAutoFitFont";
 
 interface HeroProps {
     variant?: "default" | "reveal";
+    /** Set to true when splash screen finishes — triggers entrance animations */
+    splashDone?: boolean;
 }
 
-export default function Hero({ variant = "default" }: HeroProps) {
+export default function Hero({ variant = "default", splashDone = false }: HeroProps) {
+    const videoWrapRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const defaultTextRef = useRef<HTMLDivElement>(null);
     const revealTextRef = useRef<HTMLDivElement>(null);
@@ -18,26 +21,51 @@ export default function Hero({ variant = "default" }: HeroProps) {
     useAutoFitFont(revealTextRef, { maxFont: 190, minFont: 32, selector: "h1" });
 
     useLayoutEffect(() => {
-        if (variant === "default") {
-            gsap.registerPlugin(ScrollTrigger);
-            const video = videoRef.current;
+        if (variant !== "default") return;
+        gsap.registerPlugin(ScrollTrigger);
 
-            const videoYTo = video
-                ? gsap.quickTo(video, "y", { duration: 0.28, ease: "none" })
-                : () => { };
+        const video = videoRef.current;
 
-            const updateVideoPos = () => {
-                if (video) videoYTo(window.scrollY * 0.4);
-            }
+        /* ── Parallax on scroll ── */
+        const videoYTo = video
+            ? gsap.quickTo(video, "y", { duration: 0.28, ease: "none" })
+            : () => { };
 
-            window.addEventListener("scroll", updateVideoPos);
+        const updateVideoPos = () => {
+            if (video) videoYTo(window.scrollY * 0.4);
+        };
+        window.addEventListener("scroll", updateVideoPos);
 
-            return () => {
-                window.removeEventListener("scroll", updateVideoPos);
-            }
-        }
+        return () => {
+            window.removeEventListener("scroll", updateVideoPos);
+        };
     }, [variant]);
 
+    /* ── Entrance animations — fire when splashDone flips true ── */
+    useLayoutEffect(() => {
+        if (variant !== "default" || !splashDone) return;
+
+        /* Video zoom-out */
+        if (videoWrapRef.current) {
+            gsap.fromTo(
+                videoWrapRef.current,
+                { scale: 1.5 },
+                { scale: 1, duration: 1.5, ease: "power3.out" }
+            );
+        }
+
+        /* Word-by-word fade-up */
+        if (defaultTextRef.current) {
+            const words = defaultTextRef.current.querySelectorAll<HTMLElement>(".hero-word");
+            gsap.fromTo(
+                words,
+                { y: 50, opacity: 0 },
+                { y: 0, opacity: 1, duration: 2, stagger: 0.15, ease: "power3.out", delay: 0.1 }
+            );
+        }
+    }, [variant, splashDone]);
+
+    /* ── REVEAL VARIANT ── */
     if (variant === "reveal") {
         return (
             <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden bg-[#EB5939]">
@@ -61,9 +89,14 @@ export default function Hero({ variant = "default" }: HeroProps) {
         );
     }
 
+    /* ── DEFAULT VARIANT ── */
     return (
         <div className="w-full min-h-screen m-0 p-0 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full">
+            {/* Video — wrapped for clean scale transform */}
+            <div
+                ref={videoWrapRef}
+                className="absolute top-0 left-0 w-full h-full will-change-transform"
+            >
                 <video
                     ref={videoRef}
                     className="w-full h-full object-cover"
@@ -73,31 +106,41 @@ export default function Hero({ variant = "default" }: HeroProps) {
                     playsInline
                 >
                     <source src="/g3.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
                 </video>
             </div>
 
+            {/* Text overlay */}
             <div
                 ref={defaultTextRef}
                 className="absolute top-0 left-0 h-full w-full min-h-screen flex flex-col justify-center px-[8%] sm:px-[12%] md:px-[15%]"
             >
-                <h2
+                {/* Subtitle — each word wrapped */}
+                <h2 className="text-[#b7ab98] text-sm sm:text-lg md:text-2xl tracking-[0.3em] mb-2 w-fit flex gap-[0.35em] flex-wrap"
                     data-mask-size="1200"
-                    className="text-[#b7ab98] text-sm sm:text-lg md:text-2xl tracking-[0.3em] mb-2 w-fit"
                 >
-                    HUSNAIN KHURSHID
+                    {["HUSNAIN", "KHURSHID"].map((w) => (
+                        <span key={w} className="hero-word inline-block opacity-0">{w}</span>
+                    ))}
                 </h2>
+
+                {/* Main headline — each word/line wrapped */}
                 <h1
                     data-mask-size="1200"
                     className="text-[#b7ab98] text-[1em] font-extrabold leading-none whitespace-nowrap w-fit"
                 >
-                    MAKING
-                    <br />
-                    GOOD
-                    <br />
-                    <span className="text-[#EB5939]">SHIT SINCE</span>
-                    <br />
-                    2019
+                    {/* Each visual "line" is its own block so layout stays identical */}
+                    <span className="block">
+                        <span className="hero-word inline-block opacity-0">MAKING</span>
+                    </span>
+                    <span className="block">
+                        <span className="hero-word inline-block opacity-0">GOOD</span>
+                    </span>
+                    <span className="block">
+                        <span className="hero-word inline-block opacity-0 text-[#EB5939]">SHIT&nbsp;SINCE</span>
+                    </span>
+                    <span className="block">
+                        <span className="hero-word inline-block opacity-0">2019</span>
+                    </span>
                 </h1>
             </div>
         </div>

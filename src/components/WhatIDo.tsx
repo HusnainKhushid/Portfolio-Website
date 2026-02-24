@@ -61,7 +61,7 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
 
     if (variant === "reveal") {
         return (
-            <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
+            <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center bg-[#EB5939]">
                 <div className="relative w-full h-[60px] sm:h-[80px] md:h-[100px] flex items-center">
                     <span className="absolute left-[12.5%] text-sm sm:text-lg md:text-2xl text-black font-semibold tracking-[0.3em]">
                         WHAT I DO
@@ -98,7 +98,7 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
 
     // DEFAULT VARIANT
     return (
-        <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative" ref={containerRef}>
+        <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative" ref={containerRef}>
             <div className="bg-[#D9D9D9] w-full">
                 <div className="relative w-full h-[60px] sm:h-[80px] md:h-[100px] flex items-center">
                     <span className="absolute left-[12.5%] text-sm sm:text-lg md:text-2xl text-black font-semibold tracking-[0.3em]">

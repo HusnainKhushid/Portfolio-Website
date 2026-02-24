@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "@studio-freight/lenis";
@@ -13,10 +13,14 @@ import WhatIDo from "../components/WhatIDo";
 import Showreel from "../components/Showreel";
 import Motto from "../components/Motto";
 import Experience from "../components/Experience";
-import LottieScroll from "../components/LottieScroll";
+
+import GlobeScene from "../components/GlobeScene";
+import Contact from "../components/Contact";
+import SplashScreen from "../components/SplashScreen";
 
 export default function HomePage() {
   const revealRef = useRef<HTMLDivElement>(null);
+  const [splashDone, setSplashDone] = useState(false);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -53,29 +57,16 @@ export default function HomePage() {
     let hasPointerMoved = false;
     let currentHoverTarget: Element | null = null;
 
-    const syncCursorPosition = () => {
-      cursorXTo(pointerClientX + window.scrollX);
-      cursorYTo(pointerClientY + window.scrollY);
-    };
+    const checkMaskHover = () => {
+      // Don't check if the pointer hasn't even entered the screen yet
+      if (!hasPointerMoved) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      pointerClientX = e.clientX;
-      pointerClientY = e.clientY;
+      // Because the topmost reveal/globe layers have pointer-events-none, 
+      // this correctly returns the interactive layer 1 element below the cursor.
+      const el = document.elementFromPoint(pointerClientX, pointerClientY);
+      if (!el) return;
 
-      if (!hasPointerMoved) {
-        hasPointerMoved = true;
-        gsap.set(reveal, {
-          "--cursor-x": pointerClientX + window.scrollX,
-          "--cursor-y": pointerClientY + window.scrollY,
-        });
-        gsap.to(reveal, { opacity: 1, duration: 0.3 });
-        maskScaleTo(1);
-      }
-
-      // Check if we are hovering over an element that should expand the mask
-      // The Components should put `data-mask-size` on their interactive elements.
-      const hoverElement = target.closest("[data-mask-size]");
+      const hoverElement = el.closest("[data-mask-size]");
       if (hoverElement !== currentHoverTarget) {
         currentHoverTarget = hoverElement;
         if (hoverElement) {
@@ -86,6 +77,28 @@ export default function HomePage() {
         } else {
           maskScaleTo(1);
         }
+      }
+    };
+
+    const syncCursorPosition = () => {
+      cursorXTo(pointerClientX + window.scrollX);
+      cursorYTo(pointerClientY + window.scrollY);
+      checkMaskHover(); // Re-evaluate hover element as the page scrolls beneath the cursor
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      pointerClientX = e.clientX;
+      pointerClientY = e.clientY;
+
+      if (!hasPointerMoved) {
+        hasPointerMoved = true;
+        // Snap the mask to initial position immediately
+        gsap.set(reveal, {
+          "--cursor-x": pointerClientX + window.scrollX,
+          "--cursor-y": pointerClientY + window.scrollY,
+        });
+        gsap.to(reveal, { opacity: 1, duration: 0.3 });
+        maskScaleTo(1);
       }
 
       syncCursorPosition();
@@ -105,21 +118,21 @@ export default function HomePage() {
   return (
     <>
       <div className={`main relative`}>
+        <SplashScreen onBegin={() => setSplashDone(true)} onComplete={() => { }} />
         <Navigation />
 
         {/* ================================================================================================= */}
         {/* === BACKGROUND CONTENT (Layer 1 - Default) === */}
         {/* ================================================================================================= */}
         <div>
-          <Hero variant="default" />
+          <Hero variant="default" splashDone={splashDone} />
           <About variant="default" />
           <WhatIDo variant="default" />
           <Showreel variant="default" />
           <Experience variant="default" />
           <Motto variant="default" />
 
-          {/* LottieScroll is structurally outside the reveal logic in original design */}
-          <LottieScroll />
+          <Contact variant="default" />
         </div>
 
         {/* ================================================================================================= */}
@@ -150,7 +163,40 @@ export default function HomePage() {
           <Showreel variant="reveal" />
           <Experience variant="reveal" />
           <Motto variant="reveal" />
-          {/* LottieScroll is NOT in reveal layer */}
+          <Contact variant="reveal" />
+        </div>
+
+        {/* ======================================================= */}
+        {/* === LAYER 3 — Globe (above reveal, scrolls with page) = */}
+        {/* ======================================================= */}
+        {/* Uses the same section heights so the globe sits exactly */}
+        {/* over the Experience section in the stacking order.      */}
+        <div
+          className="absolute top-0 left-0 w-full pointer-events-none"
+          style={{ zIndex: 50 }}
+          aria-hidden="true"
+        >
+          {/* 
+                We have 4 sections before Experience: Hero, About, WhatIDo, Showreel
+                Hero: 100vh
+                About: min-h-[60vh] md:min-h-screen
+                WhatIDo: min-h-[60vh] md:min-h-screen
+                Showreel: min-h-[60vh] md:min-h-screen
+                They don't perfectly equal 400vh on mobile anymore.
+                But for testing "on top", we just put it inside a static place.
+                For now we just reuse the spacer layout:
+             */}
+          <div className="flex flex-col w-full opacity-0">
+            <div className="w-full h-screen" />
+            <div className="w-full min-h-[60vh] md:min-h-screen" />
+            <div className="w-full min-h-[60vh] md:min-h-screen" />
+            <div className="w-full min-h-[60vh] md:min-h-screen" />
+          </div>
+
+          {/* Globe canvas — same height as Experience section */}
+          <div className="w-full min-h-[60vh] md:min-h-screen absolute top-0 mt-[100vh]" style={{ transform: "translateY(calc(max(60vh, 100vh) * 3))" }}>
+            <GlobeScene />
+          </div>
         </div>
       </div>
     </>

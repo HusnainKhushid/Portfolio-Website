@@ -64,7 +64,7 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
 
     if (variant === "reveal") {
         return (
-            <div className="w-full min-h-screen items-center justify-center bg-[#EB5939] ">
+            <div className="w-full min-h-[60vh] md:min-h-screen items-center justify-center bg-[#EB5939] ">
                 <div className="relative top-0 left-0 w-full h-[100px] flex items-center">
                     <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em] test">
                         SHOWREEL
@@ -75,7 +75,7 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
     }
 
     return (
-        <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative overflow-hidden" data-mask-size="300">
+        <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative overflow-hidden" data-mask-size="300">
             <div className="absolute top-0 left-0 w-full h-[100px] flex items-center">
                 <span className="absolute left-1/8 text-2xl text-black font-semibold tracking-[0.3em]">
                     SHOWREEL
