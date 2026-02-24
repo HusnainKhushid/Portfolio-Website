@@ -12,6 +12,7 @@ import About from "../components/About";
 import WhatIDo from "../components/WhatIDo";
 import Showreel from "../components/Showreel";
 import Motto from "../components/Motto";
+import Experience from "../components/Experience";
 import LottieScroll from "../components/LottieScroll";
 
 export default function HomePage() {
@@ -114,6 +115,7 @@ export default function HomePage() {
           <About variant="default" />
           <WhatIDo variant="default" />
           <Showreel variant="default" />
+          <Experience variant="default" />
           <Motto variant="default" />
 
           {/* LottieScroll is structurally outside the reveal logic in original design */}
@@ -146,6 +148,7 @@ export default function HomePage() {
           <About variant="reveal" />
           <WhatIDo variant="reveal" />
           <Showreel variant="reveal" />
+          <Experience variant="reveal" />
           <Motto variant="reveal" />
           {/* LottieScroll is NOT in reveal layer */}
         </div>

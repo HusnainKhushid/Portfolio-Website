@@ -39,6 +39,18 @@ body {
   -webkit-background-clip: text;
 }
 
+/* Light variant for dark backgrounds (Experience section) */
+.reveal-text-light {
+  color: transparent;
+  background-clip: text;
+  background: linear-gradient(to right,
+      #b7ab98 50%,
+      #5a5245 50%);
+  background-size: 200% 100%;
+  background-position-x: 100%;
+  -webkit-background-clip: text;
+}
+
 
 @layer utilities {
   .mask-rect {

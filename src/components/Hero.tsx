@@ -83,13 +83,13 @@ export default function Hero({ variant = "default" }: HeroProps) {
             >
                 <h2
                     data-mask-size="1200"
-                    className="text-[#b7ab98] text-sm sm:text-lg md:text-2xl tracking-[0.3em] mb-2"
+                    className="text-[#b7ab98] text-sm sm:text-lg md:text-2xl tracking-[0.3em] mb-2 w-fit"
                 >
                     HUSNAIN KHURSHID
                 </h2>
                 <h1
                     data-mask-size="1200"
-                    className="text-[#b7ab98] text-[1em] font-extrabold leading-none whitespace-nowrap"
+                    className="text-[#b7ab98] text-[1em] font-extrabold leading-none whitespace-nowrap w-fit"
                 >
                     MAKING
                     <br />
