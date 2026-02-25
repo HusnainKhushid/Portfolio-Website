@@ -106,3 +106,17 @@ body {
 .motto-image {
   will-change: transform;
 }
+
+/* GPU hints for frequently animated elements */
+.showreel-video {
+  will-change: transform;
+}
+
+.mask-reveal,
+.contact-mask-reveal {
+  will-change: mask-size;
+}
+
+.hero-word {
+  will-change: transform, opacity;
+}

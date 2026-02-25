@@ -11,48 +11,47 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(() => {
-        if (variant === "default" && containerRef.current) {
-            const items = containerRef.current.querySelectorAll(".mask-reveal");
-            items.forEach((maskElement: Element) => {
-                const el = maskElement as HTMLElement;
-                const spanTag = el.querySelector("span") as HTMLElement;
-                if (spanTag) {
-                    // placeholder
-                }
+        if (variant !== "default" || !containerRef.current) return;
+
+        const grayItems = containerRef.current.querySelectorAll('.gray-item');
+        const orangeItems = containerRef.current.querySelectorAll('.mask-reveal');
+        const cleanups: (() => void)[] = [];
+
+        grayItems.forEach((grayEl, index) => {
+            const orangeEl = orangeItems[index] as HTMLElement;
+            if (!orangeEl) return;
+
+            gsap.set(orangeEl, {
+                maskSize: "100% 0%",
+                WebkitMaskSize: "100% 0%",
             });
-        }
-    }, [variant]);
 
-    useLayoutEffect(() => {
-        if (variant === "default" && containerRef.current) {
-            const grayItems = containerRef.current.querySelectorAll('.gray-item');
-            const orangeItems = containerRef.current.querySelectorAll('.mask-reveal');
-
-            grayItems.forEach((grayEl, index) => {
-                const orangeEl = orangeItems[index] as HTMLElement;
-                if (!orangeEl) return;
-
-                gsap.set(orangeEl, {
-                    maskSize: "100% 0%",
-                    WebkitMaskSize: "100% 0%",
+            const animateTo = (height: string) => {
+                gsap.to(orangeEl, {
+                    maskSize: `100% ${height}`,
+                    WebkitMaskSize: `100% ${height}`,
+                    duration: 0.6,
+                    ease: "power1.out",
                 });
+            };
 
-                const animateTo = (height: string) => {
-                    gsap.to(orangeEl, {
-                        maskSize: `100% ${height}`,
-                        WebkitMaskSize: `100% ${height}`,
-                        duration: 0.6,
-                        ease: "power1.out",
-                    });
-                }
+            const onEnter = () => animateTo("100%");
+            const onLeave = () => animateTo("0%");
 
-                grayEl.addEventListener('mouseenter', () => animateTo("100%"));
-                grayEl.addEventListener('mouseleave', () => animateTo("0%"));
+            grayEl.addEventListener('mouseenter', onEnter);
+            grayEl.addEventListener('mouseleave', onLeave);
+            orangeEl.addEventListener('mouseenter', onEnter);
+            orangeEl.addEventListener('mouseleave', onLeave);
 
-                orangeEl.addEventListener('mouseenter', () => animateTo("100%"));
-                orangeEl.addEventListener('mouseleave', () => animateTo("0%"));
+            cleanups.push(() => {
+                grayEl.removeEventListener('mouseenter', onEnter);
+                grayEl.removeEventListener('mouseleave', onLeave);
+                orangeEl.removeEventListener('mouseenter', onEnter);
+                orangeEl.removeEventListener('mouseleave', onLeave);
             });
-        }
+        });
+
+        return () => { cleanups.forEach(fn => fn()); };
     }, [variant]);
 
     /* ─── Responsive text size classes ──────────────────────────── */
@@ -98,7 +97,7 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
 
     // DEFAULT VARIANT
     return (
-        <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative" ref={containerRef}>
+        <div id="work" className="w-full min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center bg-[#D9D9D9] relative" ref={containerRef}>
             <div className="bg-[#D9D9D9] w-full">
                 <div className="relative w-full h-[60px] sm:h-[80px] md:h-[100px] flex items-center">
                     <span className="absolute left-[12.5%] text-sm sm:text-lg md:text-2xl text-black font-semibold tracking-[0.3em]">

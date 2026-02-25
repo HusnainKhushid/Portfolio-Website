@@ -1,45 +1,38 @@
 "use client";
 
-import React, { Suspense, useState, useEffect } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import React, { Suspense, useEffect, useRef } from 'react';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import ModelView from './ModelView';
 
-const SceneContent: React.FC<{ scrollY: number }> = ({ scrollY }) => {
-    const { viewport } = useThree();
+const SceneContent: React.FC<{ scrollYRef: React.RefObject<number> }> = ({ scrollYRef }) => {
+    const { viewport, invalidate } = useThree();
 
-    // Responsive scale logic
-    // On small screens (mobile), viewport.width is small.
-    // We adjust scale to ensure it doesn't look too massive or tiny, 
-    // though the main request is positioning.
     const isMobile = viewport.width < 5;
     const scale = isMobile ? 0.02 : 0.03;
-
-    // Position: half outside means centered on the edge.
-    // viewport.width is the total width. Edge is width / 2.
-    // Left edge: -width / 2
-    // Right edge: width / 2
     const xPos = (viewport.width / 2);
+
+    // Drive rotation from ref (no re-renders) and request a new frame
+    useFrame(() => {
+        invalidate(); // request render only when called
+    });
 
     return (
         <>
-            {/* Mouse on the Left */}
             <ModelView
                 path="/3d/mouse.min.gltf"
                 scale={scale}
                 position={[-xPos - .1, 1.0, 0]}
                 rotation={[0.3, -1, 0]}
-                scrollY={scrollY}
+                scrollYRef={scrollYRef}
                 rotationSpeed={0.1}
             />
-
-            {/* Coffee on the Right */}
             <ModelView
                 path="/3d/coffee.min.gltf"
                 scale={scale}
                 position={[xPos, -1.5, 0]}
                 rotation={[0.3, -0.5, 0]}
-                scrollY={scrollY}
+                scrollYRef={scrollYRef}
                 rotationSpeed={0.1}
             />
         </>
@@ -47,27 +40,39 @@ const SceneContent: React.FC<{ scrollY: number }> = ({ scrollY }) => {
 };
 
 const AboutScene: React.FC = () => {
-    const [scrollY, setScrollY] = useState(0);
+    const scrollYRef = useRef(0);
+    const isVisibleRef = useRef(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrollY(window.scrollY);
+        const handleScroll = () => { scrollYRef.current = window.scrollY; };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        scrollYRef.current = window.scrollY;
+
+        // Only render when the About section is in the viewport
+        const observer = new IntersectionObserver(
+            ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+            { rootMargin: '200px' }  // start rendering slightly before visible
+        );
+        if (containerRef.current) observer.observe(containerRef.current);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            observer.disconnect();
         };
-
-        window.addEventListener('scroll', handleScroll);
-        // Initial set
-        setScrollY(window.scrollY);
-
-        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
-        <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-            <Canvas className="w-full h-full" camera={{ position: [0, 0, 5], fov: 45 }}>
+        <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-0">
+            <Canvas
+                className="w-full h-full"
+                camera={{ position: [0, 0, 5], fov: 45 }}
+                frameloop="demand"
+            >
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[5, 10, 5]} intensity={2} />
                 <Suspense fallback={null}>
-                    <SceneContent scrollY={scrollY} />
+                    <SceneContent scrollYRef={scrollYRef} />
                     <Environment preset="city" />
                 </Suspense>
             </Canvas>

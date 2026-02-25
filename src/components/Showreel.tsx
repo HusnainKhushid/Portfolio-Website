@@ -42,7 +42,7 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
 
     useLayoutEffect(() => {
         if (variant === "default") {
-            gsap.registerPlugin(ScrollTrigger);
+
             if (showreelVideoRef.current) {
                 gsap.fromTo(
                     showreelVideoRef.current,

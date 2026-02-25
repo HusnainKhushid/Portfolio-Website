@@ -82,7 +82,7 @@ export default function Experience({ variant = "default" }: ExperienceProps) {
     const textRef = useRef<HTMLParagraphElement>(null);
 
     useLayoutEffect(() => {
-        gsap.registerPlugin(ScrollTrigger);
+
 
         /* About-style reveal: gradient slides left-to-right on scroll */
         if (variant === "default" && textRef.current) {

@@ -34,6 +34,7 @@ export default function Contact({ variant = "default" }: ContactProps) {
 
         const grayItems = containerRef.current.querySelectorAll<HTMLElement>(".contact-gray-item");
         const orangeItems = containerRef.current.querySelectorAll<HTMLElement>(".contact-mask-reveal");
+        const cleanups: (() => void)[] = [];
 
         orangeItems.forEach((el) => {
             gsap.set(el, { maskSize: "100% 0%", WebkitMaskSize: "100% 0%" });
@@ -51,11 +52,23 @@ export default function Contact({ variant = "default" }: ContactProps) {
                     ease: "power1.out",
                 });
 
-            grayEl.addEventListener("mouseenter", () => animateTo("100%"));
-            grayEl.addEventListener("mouseleave", () => animateTo("0%"));
-            orangeEl.addEventListener("mouseenter", () => animateTo("100%"));
-            orangeEl.addEventListener("mouseleave", () => animateTo("0%"));
+            const onEnter = () => animateTo("100%");
+            const onLeave = () => animateTo("0%");
+
+            grayEl.addEventListener("mouseenter", onEnter);
+            grayEl.addEventListener("mouseleave", onLeave);
+            orangeEl.addEventListener("mouseenter", onEnter);
+            orangeEl.addEventListener("mouseleave", onLeave);
+
+            cleanups.push(() => {
+                grayEl.removeEventListener("mouseenter", onEnter);
+                grayEl.removeEventListener("mouseleave", onLeave);
+                orangeEl.removeEventListener("mouseenter", onEnter);
+                orangeEl.removeEventListener("mouseleave", onLeave);
+            });
         });
+
+        return () => { cleanups.forEach(fn => fn()); };
     }, [variant]);
 
     const textSize = "text-[clamp(1.75rem,4.5vw,60px)]";
@@ -63,7 +76,7 @@ export default function Contact({ variant = "default" }: ContactProps) {
     /* ── REVEAL VARIANT ── */
     if (variant === "reveal") {
         return (
-            <section className="w-full bg-[#EB5939] py-16 md:py-24">
+            <section className="w-full bg-[#EB5939] py-10 md:py-16">
                 <div className="relative w-full h-[60px] sm:h-[70px] flex items-center">
                     <span className="absolute left-[12.5%] text-xs sm:text-sm md:text-base text-black font-semibold tracking-[0.5em] uppercase">
                         Connect
@@ -106,7 +119,7 @@ export default function Contact({ variant = "default" }: ContactProps) {
                     </div>
                 </div>
 
-                <div className="mt-16 mx-[12.5%] pt-5 flex flex-col sm:flex-row justify-between gap-3">
+                <div className="mt-10 mx-[12.5%] pt-3 flex flex-col sm:flex-row justify-between gap-3">
                     <span className="text-[10px] text-black/40 tracking-widest uppercase">
                         © {new Date().getFullYear()} Husnain Khushid — All rights reserved
                     </span>
@@ -120,7 +133,7 @@ export default function Contact({ variant = "default" }: ContactProps) {
 
     /* ── DEFAULT VARIANT ── */
     return (
-        <section className="w-full bg-[#0d0d0d] py-16 md:py-24" ref={containerRef}>
+        <section id="contact" className="w-full bg-[#0d0d0d] py-10 md:py-16" ref={containerRef}>
             {/* Label */}
             <div className="relative w-full h-[60px] sm:h-[70px] flex items-center">
                 <span className="absolute left-[12.5%] text-xs sm:text-sm md:text-base text-[#b7ab98] font-semibold tracking-[0.5em] uppercase">
@@ -240,7 +253,7 @@ export default function Contact({ variant = "default" }: ContactProps) {
             </div>
 
             {/* Footer */}
-            <div className="mt-16 mx-[12.5%] pt-5 flex flex-col sm:flex-row justify-between gap-3">
+            <div className="mt-10 mx-[12.5%] pt-3 flex flex-col sm:flex-row justify-between gap-3">
                 <span className="text-[10px] text-[#2e2e2e] tracking-widest uppercase">
                     © {new Date().getFullYear()} Husnain Khushid — All rights reserved
                 </span>

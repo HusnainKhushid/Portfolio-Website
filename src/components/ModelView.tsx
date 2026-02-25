@@ -12,6 +12,9 @@ interface ModelViewProps {
     rotation?: [number, number, number];
     floatIntensity?: number;
     rotationSpeed?: number;
+    /** Use ref to avoid re-renders on scroll */
+    scrollYRef?: React.RefObject<number>;
+    /** @deprecated Use scrollYRef instead */
     scrollY?: number;
 }
 
@@ -21,6 +24,7 @@ const ModelView: React.FC<ModelViewProps> = ({
     position = [0, 0, 0],
     rotation = [0, 0, 0],
     rotationSpeed = 0.1,
+    scrollYRef,
     scrollY = 0
 }) => {
     const { scene } = useGLTF(path);
@@ -28,9 +32,8 @@ const ModelView: React.FC<ModelViewProps> = ({
 
     useFrame(() => {
         if (groupRef.current) {
-            // Scroll-based rotation
-            groupRef.current.rotation.y = rotation[1] + (scrollY * rotationSpeed * 0.01);
-
+            const sy = scrollYRef ? scrollYRef.current : scrollY;
+            groupRef.current.rotation.y = rotation[1] + (sy * rotationSpeed * 0.01);
         }
     });
 
@@ -42,4 +45,3 @@ const ModelView: React.FC<ModelViewProps> = ({
 };
 
 export default ModelView;
-

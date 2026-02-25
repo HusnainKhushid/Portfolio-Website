@@ -17,28 +17,27 @@ export default function Hero({ variant = "default", splashDone = false }: HeroPr
     const defaultTextRef = useRef<HTMLDivElement>(null);
     const revealTextRef = useRef<HTMLDivElement>(null);
 
-    useAutoFitFont(defaultTextRef, { maxFont: 190, minFont: 32, selector: "h1" });
-    useAutoFitFont(revealTextRef, { maxFont: 190, minFont: 32, selector: "h1" });
+    useAutoFitFont(defaultTextRef, { maxFont: 182, minFont: 32, selector: "h1" });
+    useAutoFitFont(revealTextRef, { maxFont: 182, minFont: 32, selector: "h1" });
 
     useLayoutEffect(() => {
         if (variant !== "default") return;
-        gsap.registerPlugin(ScrollTrigger);
 
-        const video = videoRef.current;
 
-        /* ── Parallax on scroll ── */
-        const videoYTo = video
-            ? gsap.quickTo(video, "y", { duration: 0.28, ease: "none" })
-            : () => { };
-
-        const updateVideoPos = () => {
-            if (video) videoYTo(window.scrollY * 0.4);
-        };
-        window.addEventListener("scroll", updateVideoPos);
-
-        return () => {
-            window.removeEventListener("scroll", updateVideoPos);
-        };
+        /* ── Parallax on scroll — synced with Lenis via ScrollTrigger ── */
+        if (videoRef.current) {
+            gsap.to(videoRef.current, {
+                y: () => window.innerHeight * 0.4,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: videoRef.current.closest("div"),
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true,
+                    invalidateOnRefresh: true,
+                },
+            });
+        }
     }, [variant]);
 
     /* ── Entrance animations — fire when splashDone flips true ── */

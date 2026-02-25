@@ -5,6 +5,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
+// Register the plugin (safe to call multiple times)
+gsap.registerPlugin(ScrollTrigger);
+
 interface MottoProps {
     variant?: "default" | "reveal";
 }
@@ -15,9 +18,9 @@ export default function Motto({ variant = "default" }: MottoProps) {
     const mottoImageRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(() => {
-        gsap.registerPlugin(ScrollTrigger);
+        if (variant !== "default") return;
 
-        if (variant === "default") {
+        const ctx = gsap.context(() => {
             // --- MOTTO WORDS ENTRY ANIMATION ---
             if (mottoRef.current) {
                 const words = mottoRef.current.querySelectorAll('.motto-word');
@@ -41,25 +44,32 @@ export default function Motto({ variant = "default" }: MottoProps) {
                 }
             }
 
-            // --- MOTTO IMAGE PARALLAX (scrub-based, best practice) ---
+            // --- MOTTO IMAGE PARALLAX (scrub-based, GSAP best practice) ---
             if (mottoImageRef.current) {
                 gsap.fromTo(
                     mottoImageRef.current,
-                    { yPercent: -15 },
                     {
-                        yPercent: 15,
+                        yPercent: -20,
+                        scale: 1.05,
+                    },
+                    {
+                        yPercent: 20,
+                        scale: 1.15,
                         ease: "none",
+                        force3D: true,
                         scrollTrigger: {
                             trigger: sectionRef.current,
                             start: "top bottom",
                             end: "bottom top",
-                            scrub: true,
+                            scrub: 0.6,
                             invalidateOnRefresh: true,
                         },
                     }
                 );
             }
-        }
+        }, sectionRef);
+
+        return () => ctx.revert(); // Proper GSAP cleanup
     }, [variant]);
 
     if (variant === "reveal") {
@@ -86,7 +96,15 @@ export default function Motto({ variant = "default" }: MottoProps) {
         <div ref={sectionRef} className="w-full min-h-[60vh] md:h-[100vh] flex flex-col items-center justify-center relative overflow-hidden" >
             {/* Background Image — oversized for parallax headroom */}
             <div className="absolute inset-0 w-full h-full overflow-hidden" style={{ zIndex: 0 }}>
-                <div ref={mottoImageRef} className="absolute left-0 w-full motto-image" style={{ top: '-15%', height: '130%' }}>
+                <div
+                    ref={mottoImageRef}
+                    className="absolute left-0 w-full motto-image"
+                    style={{
+                        top: '-20%',
+                        height: '140%',
+                        willChange: 'transform',
+                    }}
+                >
                     <Image
                         src="/mymotto.jpg"
                         alt="Banner Background"
