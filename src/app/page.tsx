@@ -6,17 +6,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "@studio-freight/lenis";
 
 // Components
-import Navigation from "../components/Navigation";
-import Hero from "../components/Hero";
-import About from "../components/About";
-import WhatIDo from "../components/WhatIDo";
-import Showreel from "../components/Showreel";
-import Motto from "../components/Motto";
-import Experience from "../components/Experience";
+import Navigation from "../components/ui/Navigation";
+import Hero from "../components/sections/Hero";
+import About from "../components/sections/About";
+import WhatIDo from "../components/sections/WhatIDo";
+import Showreel from "../components/sections/Showreel";
+import Motto from "../components/sections/Motto";
+import Experience from "../components/sections/Experience";
 
-import GlobeScene from "../components/GlobeScene";
-import Contact from "../components/Contact";
-import SplashScreen from "../components/SplashScreen";
+import GlobeScene from "../components/3d/GlobeScene";
+import Contact from "../components/sections/Contact";
+import SplashScreen from "../components/ui/SplashScreen";
 
 export default function HomePage() {
   const revealRef = useRef<HTMLDivElement>(null);

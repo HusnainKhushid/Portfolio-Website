@@ -1,5 +1,5 @@
-import MotionHeader from "@/components/MotionHeader";
-import Navigation from "@/components/Navigation";
+import MotionHeader from "@/components/ui/MotionHeader";
+import Navigation from "@/components/ui/Navigation";
 
 export default function MotionPage() {
     return (
