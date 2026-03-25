@@ -19,18 +19,27 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
         try {
             if (!document.fullscreenElement) {
                 await video.requestFullscreen();
-                video.controls = true;
+            } else {
+                if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                }
             }
         } catch (error) {
-            console.error('Error attempting to enable fullscreen:', error);
+            console.error('Error attempting to toggle fullscreen:', error);
         }
     };
 
     useEffect(() => {
         const handleFullscreenChange = () => {
             const video = showreelVideoRef.current;
-            if (!document.fullscreenElement && video) {
-                video.controls = false;
+            if (!video) return;
+
+            if (document.fullscreenElement) {
+                // In fullscreen: unmuted (sound on)
+                video.muted = false;
+            } else {
+                // Out of fullscreen: muted (no sound)
+                video.muted = true;
             }
         };
 
