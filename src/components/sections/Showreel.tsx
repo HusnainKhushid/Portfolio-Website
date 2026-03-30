@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 interface ShowreelProps {
     variant?: "default" | "reveal";
@@ -10,6 +11,8 @@ interface ShowreelProps {
 
 export default function Showreel({ variant = "default" }: ShowreelProps) {
     const showreelVideoRef = useRef<HTMLVideoElement>(null);
+    const isMobile = useIsMobile();
+    const videoSrc = isMobile ? "/Showreel-vertical.mp4" : "/Showreel-2025.mp4";
 
     // --- Showreel Logic ---
     const handleShowreelClick = async () => {
@@ -93,6 +96,7 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
 
             <div className="absolute inset-0 w-full h-full">
                 <video
+                    key={videoSrc}
                     ref={showreelVideoRef}
                     className="w-full h-full object-cover showreel-video cursor-pointer"
                     autoPlay
@@ -100,11 +104,10 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
                     muted
                     playsInline
                     controls={false}
+                    src={videoSrc}
                     style={{ pointerEvents: 'auto' }}
                     onClick={handleShowreelClick}
-                >
-                    <source src="/Showreel-2025.mp4" type="video/mp4" />
-                </video>
+                />
             </div>
         </div>
     );

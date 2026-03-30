@@ -40,7 +40,11 @@ export default function Navigation() {
         e.preventDefault();
         const el = document.getElementById(id);
         if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            if ((window as any).lenis) {
+                (window as any).lenis.scrollTo(el);
+            } else {
+                el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
         }
     };
 

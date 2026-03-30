@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useAutoFitFont } from "../../hooks/useAutoFitFont";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 interface HeroProps {
     variant?: "default" | "reveal";
@@ -16,6 +17,8 @@ export default function Hero({ variant = "default", splashDone = false }: HeroPr
     const videoRef = useRef<HTMLVideoElement>(null);
     const defaultTextRef = useRef<HTMLDivElement>(null);
     const revealTextRef = useRef<HTMLDivElement>(null);
+    const isMobile = useIsMobile();
+    const videoSrc = isMobile ? "/g3 Vertical.mp4" : "/g3.mp4";
 
     useAutoFitFont(defaultTextRef, { maxFont: 182, minFont: 32, selector: "h1" });
     useAutoFitFont(revealTextRef, { maxFont: 182, minFont: 32, selector: "h1" });
@@ -97,15 +100,15 @@ export default function Hero({ variant = "default", splashDone = false }: HeroPr
                 className="absolute top-0 left-0 w-full h-full will-change-transform"
             >
                 <video
+                    key={videoSrc}
                     ref={videoRef}
                     className="w-full h-full object-cover"
                     autoPlay
                     loop
                     muted
                     playsInline
-                >
-                    <source src="/g3.mp4" type="video/mp4" />
-                </video>
+                    src={videoSrc}
+                />
             </div>
 
             {/* Text overlay */}

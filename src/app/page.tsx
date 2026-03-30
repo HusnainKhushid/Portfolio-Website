@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "@studio-freight/lenis";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 // Components
 import Navigation from "../components/ui/Navigation";
@@ -21,15 +22,18 @@ import SplashScreen from "../components/ui/SplashScreen";
 export default function HomePage() {
   const revealRef = useRef<HTMLDivElement>(null);
   const [splashDone, setSplashDone] = useState(false);
+  const isMobile = useIsMobile();
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const reveal = revealRef.current;
-    if (!reveal) return;
+    // Skip reveal mask setup on mobile — no mouse cursor
+    if (!reveal || isMobile) return;
 
     // --- 1. SMOOTH SCROLL ---
     const lenis = new Lenis();
+    (window as any).lenis = lenis;
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -136,35 +140,37 @@ export default function HomePage() {
         </div>
 
         {/* ================================================================================================= */}
-        {/* === REVEAL OVERLAY (Layer 2 - Reveal) === */}
+        {/* === REVEAL OVERLAY (Layer 2 - Reveal) — desktop only === */}
         {/* ================================================================================================= */}
-        <div
-          ref={revealRef}
-          className="reveal absolute top-0 left-0 w-full h-full pointer-events-none"
-          style={{
-            opacity: 0, // Start transparent until mouse move
-            zIndex: 15,
-            // Original mask setup
-            maskImage: 'url("/test-mask.svg")',
-            maskRepeat: "no-repeat",
-            maskSize: "calc(var(--mask-scale, 0) * 50px)",
-            maskPosition:
-              "calc(var(--cursor-x, -100) * 1px - var(--mask-scale, 0) * 25px) calc(var(--cursor-y, -100) * 1px - var(--mask-scale, 0) * 25px)",
-            WebkitMaskImage: 'url("/test-mask.svg")',
-            WebkitMaskRepeat: "no-repeat",
-            WebkitMaskSize: "calc(var(--mask-scale, 0) * 50px)",
-            WebkitMaskPosition:
-              "calc(var(--cursor-x, -100) * 1px - var(--mask-scale, 0) * 25px) calc(var(--cursor-y, -100) * 1px - var(--mask-scale, 0) * 25px)",
-          }}
-        >
-          <Hero variant="reveal" />
-          <About variant="reveal" />
-          <WhatIDo variant="reveal" />
-          <Showreel variant="reveal" />
-          <Experience variant="reveal" />
-          <Motto variant="reveal" />
-          <Contact variant="reveal" />
-        </div>
+        {!isMobile && (
+          <div
+            ref={revealRef}
+            className="reveal absolute top-0 left-0 w-full h-full pointer-events-none"
+            style={{
+              opacity: 0, // Start transparent until mouse move
+              zIndex: 15,
+              // Original mask setup
+              maskImage: 'url("/test-mask.svg")',
+              maskRepeat: "no-repeat",
+              maskSize: "calc(var(--mask-scale, 0) * 50px)",
+              maskPosition:
+                "calc(var(--cursor-x, -100) * 1px - var(--mask-scale, 0) * 25px) calc(var(--cursor-y, -100) * 1px - var(--mask-scale, 0) * 25px)",
+              WebkitMaskImage: 'url("/test-mask.svg")',
+              WebkitMaskRepeat: "no-repeat",
+              WebkitMaskSize: "calc(var(--mask-scale, 0) * 50px)",
+              WebkitMaskPosition:
+                "calc(var(--cursor-x, -100) * 1px - var(--mask-scale, 0) * 25px) calc(var(--cursor-y, -100) * 1px - var(--mask-scale, 0) * 25px)",
+            }}
+          >
+            <Hero variant="reveal" />
+            <About variant="reveal" />
+            <WhatIDo variant="reveal" />
+            <Showreel variant="reveal" />
+            <Experience variant="reveal" />
+            <Motto variant="reveal" />
+            <Contact variant="reveal" />
+          </div>
+        )}
 
         {/* ======================================================= */}
         {/* === LAYER 3 — Globe (above reveal, scrolls with page) = */}

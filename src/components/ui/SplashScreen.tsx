@@ -122,6 +122,7 @@ export default function SplashScreen({ onBegin, onComplete }: SplashScreenProps)
             <div
                 ref={btnWrapRef}
                 className="absolute"          /* absolute so it lands at true centre */
+                style={{ opacity: 0, transform: "translateY(40px) scale(0.92)" }}
             >
                 <button
                     onClick={handleBegin}
