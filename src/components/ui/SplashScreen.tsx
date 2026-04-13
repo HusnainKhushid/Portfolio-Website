@@ -11,11 +11,9 @@ interface SplashScreenProps {
 }
 
 // ─── Assets to preload ────────────────────────────────────────────────────────
-// Add any image/video URLs you want tracked in the loading bar here.
-// Keeping this minimal (only initial video) ensures the page loads fast.
-const PRELOAD_ASSETS = [
-    "/g3.mp4",
-];
+// Videos buffer lazily — no need to block the splash on them.
+// Only fonts are tracked, keeping the splash screen snappy.
+const PRELOAD_ASSETS: string[] = [];
 
 /** Returns a promise that resolves once a URL has been partially fetched (headers received). */
 function preloadAsset(url: string): Promise<void> {
@@ -196,9 +194,9 @@ export default function SplashScreen({ onBegin, onComplete }: SplashScreenProps)
                 top: 0,
                 left: 0,
                 width: "100vw",
-                height: "100vh",
+                height: "100dvh",
                 minWidth: "100vw",
-                minHeight: "100vh",
+                minHeight: "100dvh",
                 zIndex: 9999,
                 backgroundColor: "#0d0d0d",
                 touchAction: "none",
