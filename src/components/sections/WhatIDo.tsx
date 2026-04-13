@@ -69,22 +69,22 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
 
                 <div className="w-full flex justify-center">
                     <div className="w-full">
-                        <div className="">
+                        <div className="border-t border-gray-500">
                             <p className={`${bigText} font-bold text-black ml-[15%]`}>
                                 <span data-mask-size="0"> VISUAL</span>
                             </p>
                         </div>
-                        <div className="border-t-1 border-gray-500">
+                        <div className="border-t border-gray-500">
                             <p className={`${bigText} font-bold text-black ml-[15%]`}>
                                 <span data-mask-size="0"> MOTION</span>
                             </p>
                         </div>
-                        <div className="border-t-1 border-gray-500">
+                        <div className="border-t border-gray-500">
                             <p className={`${bigText} font-bold text-black ml-[15%]`}>
                                 <span data-mask-size="0">PRODUCT</span>
                             </p>
                         </div>
-                        <div className="">
+                        <div className="border-t border-b border-gray-500">
                             <p className={`${bigText} font-bold text-black ml-[15%]`}>
                                 <span data-mask-size="0">PROMO</span>
                             </p>
@@ -109,22 +109,22 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
 
                     {/* BASE: Gray Text */}
                     <div className="w-full">
-                        <div className="gray-item cursor-pointer">
+                        <div className="border-t border-gray-500 gray-item cursor-pointer">
                             <p className={`reveal-text ${bigText} font-bold text-gray-800 ml-[15%]`}>
                                 <span data-mask-size="0"> VISUAL</span>
                             </p>
                         </div>
-                        <div className="border-t-1 border-gray-500 gray-item cursor-pointer">
+                        <div className="border-t border-gray-500 gray-item cursor-pointer">
                             <p className={`reveal-text ${bigText} font-bold text-gray-800 ml-[15%]`}>
                                 <span data-mask-size="0"> MOTION</span>
                             </p>
                         </div>
-                        <div className="border-t-1 border-gray-500 gray-item cursor-pointer">
+                        <div className="border-t border-gray-500 gray-item cursor-pointer">
                             <p className={`reveal-text ${bigText} font-bold text-gray-800 ml-[15%]`}>
                                 <span data-mask-size="0">PRODUCT</span>
                             </p>
                         </div>
-                        <div className="gray-item cursor-pointer">
+                        <div className="border-t border-b border-gray-500 gray-item cursor-pointer">
                             <p className={`reveal-text ${bigText} font-bold text-gray-800 ml-[15%]`}>
                                 <span data-mask-size="0">PROMO</span>
                             </p>
@@ -134,7 +134,7 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
                     {/* OVERLAY: Orange Bars (Absolutely positioned on top) */}
                     <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                         <div className="w-full h-full flex flex-col">
-                            <div className="bg-[#EB5939] mask-reveal flex items-center px-[15%] pointer-events-auto flex-1">
+                            <div className="border-t border-gray-500 bg-[#EB5939] mask-reveal flex items-center px-[15%] pointer-events-auto flex-1">
                                 <p className={`${bigText} font-bold text-black`}>
                                     <span data-mask-size="0">VISUAL</span>
                                 </p>
@@ -161,7 +161,7 @@ export default function WhatIDo({ variant = "default" }: WhatIDoProps) {
                                 </p>
                             </div>
 
-                            <div className="bg-[#EB5939] mask-reveal flex items-center px-[15%] pointer-events-auto flex-1">
+                            <div className="border-t border-b border-gray-500 bg-[#EB5939] mask-reveal flex items-center px-[15%] pointer-events-auto flex-1">
                                 <p className={`${bigText} font-bold text-black`}>
                                     <span data-mask-size="0">PROMO</span>
                                 </p>

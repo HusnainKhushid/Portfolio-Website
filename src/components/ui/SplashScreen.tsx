@@ -2,10 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import dynamic from "next/dynamic";
+import Lottie from "lottie-react";
 import catAnimation from "../../../public/cat.json";
-
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface SplashScreenProps {
     onBegin?: () => void;    // fires immediately on button click
@@ -14,12 +12,9 @@ interface SplashScreenProps {
 
 // ─── Assets to preload ────────────────────────────────────────────────────────
 // Add any image/video URLs you want tracked in the loading bar here.
+// Keeping this minimal (only hero) ensures the page loads fast.
 const PRELOAD_ASSETS = [
     "/hero.mp4",
-    "/showreel.mp4",
-    "/this.jpg",
-    "/this2.jpg",
-    "/mymotto.jpg",
 ];
 
 /** Returns a promise that resolves once a URL has been partially fetched (headers received). */
@@ -50,7 +45,8 @@ export default function SplashScreen({ onBegin, onComplete }: SplashScreenProps)
     const btnWrapRef = useRef<HTMLDivElement>(null);
     const catWrapRef = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState(true);
-    const [ready, setReady] = useState(false); // true when all assets loaded
+    const [ready, setReady] = useState(false);      // true when all assets loaded
+    const [lottieReady, setLottieReady] = useState(false); // true after first lottie frame
 
     const RADIUS = 150;
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS; // ~942.5
@@ -68,51 +64,71 @@ export default function SplashScreen({ onBegin, onComplete }: SplashScreenProps)
         };
     }, []);
 
-    // ── 2. PRELOAD ASSETS — drive counter by real progress ───────────────────
+    // ── 2. PRELOAD ASSETS — drive counter smoothly ────────────────────────────
     useEffect(() => {
         let cancelled = false;
         const total = PRELOAD_ASSETS.length + 1; // +1 for fonts
         let loaded = 0;
+        const progress = { val: 0 };
+
+        const renderProgress = () => {
+            if (cancelled) return;
+            const pct = Math.round(progress.val);
+            if (ringRef.current) {
+                // Using gsap.set for immediate fluid updates
+                gsap.set(ringRef.current, {
+                    strokeDashoffset: CIRCUMFERENCE * (1 - pct / 100),
+                });
+            }
+            if (counterRef.current) {
+                counterRef.current.textContent = `${pct}%`;
+            }
+        };
+
+        // 1. Kick off a fluid fake progress towards 85%
+        // This ensures the loader never stalls abruptly at 0% or 50%
+        const loaderTween = gsap.to(progress, {
+            val: 85,
+            duration: 3,
+            ease: "power2.out",
+            onUpdate: renderProgress,
+        });
 
         const tick = () => {
             if (cancelled) return;
             loaded += 1;
-            const pct = Math.round((loaded / total) * 100);
-
-            // Animate ring and counter to the new percentage
-            if (ringRef.current) {
-                gsap.to(ringRef.current, {
-                    strokeDashoffset: CIRCUMFERENCE * (1 - pct / 100),
-                    duration: 0.4,
-                    ease: "power1.out",
-                });
-            }
-            if (counterRef.current) {
-                const obj = { val: parseInt(counterRef.current.textContent || "0") };
-                gsap.to(obj, {
-                    val: pct,
-                    duration: 0.4,
-                    ease: "power1.out",
-                    onUpdate() {
-                        if (counterRef.current) {
-                            counterRef.current.textContent = `${Math.round(obj.val)}%`;
-                        }
+            
+            if (loaded >= total) {
+                // 2. All essential assets loaded! 
+                // Kill the slow tween and smoothly accelerate to 100%
+                loaderTween.kill();
+                gsap.to(progress, {
+                    val: 100,
+                    duration: 0.8,
+                    ease: "power2.inOut",
+                    onUpdate: renderProgress,
+                    onComplete: () => {
+                        if (!cancelled) setReady(true);
                     },
                 });
-            }
-
-            if (loaded >= total && !cancelled) {
-                setReady(true);
             }
         };
 
         // Fonts
         document.fonts.ready.then(tick);
-
+        
         // Assets
-        PRELOAD_ASSETS.forEach((url) => preloadAsset(url).then(tick));
+        if (PRELOAD_ASSETS.length === 0) {
+            tick();
+        } else {
+            PRELOAD_ASSETS.forEach((url) => preloadAsset(url).then(tick));
+        }
 
-        return () => { cancelled = true; };
+        return () => { 
+            cancelled = true; 
+            loaderTween.kill();
+            gsap.killTweensOf(progress);
+        };
     }, [CIRCUMFERENCE]);
 
     // ── 3. GSAP SEQUENCE — run once assets are ready ─────────────────────────
@@ -173,10 +189,21 @@ export default function SplashScreen({ onBegin, onComplete }: SplashScreenProps)
     return (
         <div
             ref={overlayRef}
-            className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0d0d0d]"
-            // extra safety net: touch-action + pointer-events ensure underlying
-            // content is never reachable while the overlay is mounted
-            style={{ touchAction: "none" }}
+            className="flex flex-col items-center justify-center"
+            style={{
+                position: "fixed",
+                inset: 0,
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                minWidth: "100vw",
+                minHeight: "100vh",
+                zIndex: 9999,
+                backgroundColor: "#0d0d0d",
+                touchAction: "none",
+                overflow: "hidden",
+            }}
         >
             {/* ── Ring + cat + counter ── */}
             <div className="relative flex items-center justify-center">
@@ -210,8 +237,15 @@ export default function SplashScreen({ onBegin, onComplete }: SplashScreenProps)
                     ref={catWrapRef}
                     className="absolute flex flex-col items-center justify-center pointer-events-none"
                 >
-                    <div className="w-[200px] h-[200px] sm:w-[210px] sm:h-[210px] flex items-center justify-center">
-                        <Lottie animationData={catAnimation} loop={true} />
+                    <div
+                        className="w-[200px] h-[200px] sm:w-[210px] sm:h-[210px] flex items-center justify-center"
+                        style={{ opacity: lottieReady ? 1 : 0, transition: "opacity 0.2s ease" }}
+                    >
+                        <Lottie
+                            animationData={catAnimation}
+                            loop={true}
+                            onDOMLoaded={() => setLottieReady(true)}
+                        />
                     </div>
                     <span
                         ref={counterRef}

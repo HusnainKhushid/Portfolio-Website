@@ -7,8 +7,12 @@ interface ContactProps {
     variant?: "default" | "reveal";
 }
 
-const leftSocials = ["Dribbble", "Youtube", "Linkedin"];
-const rightSocials = ["Instagram", "Facebook", "Behance"];
+const leftSocials = [
+    { name: "Linkedin", href: "https://pk.linkedin.com/in/husnain-khurshid-b6869b26b" },
+    { name: "Instagram", href: "https://www.instagram.com/husnain_ae" },
+    { name: "Github", href: "https://github.com/HusnainKhushid" },
+];
+const rightSocials: { name: string; href: string }[] = [];
 
 function ArrowIcon({ className }: { className?: string }) {
     return (
@@ -86,35 +90,27 @@ export default function Contact({ variant = "default" }: ContactProps) {
                 <div className="w-full px-[12.5%] flex flex-col md:flex-row gap-12 md:gap-0">
                     {/* Left */}
                     <div className="flex-1 flex flex-col">
-                        {leftSocials.map((name) => (
-                            <div key={name} className="flex items-center gap-3 py-1">
+                        {leftSocials.map((item) => (
+                            <div key={item.name} className="flex items-center gap-3 py-1">
                                 <ArrowIcon className="w-5 h-5 md:w-6 md:h-6 text-black flex-shrink-0" />
                                 <span className={`${textSize} font-bold text-black`}>
-                                    <span data-mask-size="0">{name}</span>
+                                    <span data-mask-size="0">{item.name}</span>
                                 </span>
                             </div>
                         ))}
                     </div>
                     {/* Right */}
                     <div className="flex-1 flex flex-col">
-                        {rightSocials.map((name) => (
-                            <div key={name} className="flex items-center gap-3 py-1">
-                                <ArrowIcon className="w-5 h-5 md:w-6 md:h-6 text-black flex-shrink-0" />
-                                <span className={`${textSize} font-bold text-black`}>
-                                    <span data-mask-size="0">{name}</span>
-                                </span>
-                            </div>
-                        ))}
                     </div>
                     {/* Contact info */}
                     <div className="flex-none w-full md:w-[200px] flex flex-col justify-center gap-6 pl-0 md:pl-10">
                         <div>
-                            <p className="text-[10px] font-semibold tracking-[0.2em] text-black/50 uppercase mb-1">Email</p>
-                            <span className="text-[clamp(0.9rem,2vw,18px)] text-black">hello@husnain.dev</span>
+                            <p className="text-[20px] font-semibold tracking-[0.0em] text-black/50 uppercase mb-1">Email</p>
+                            <span className="text-[clamp(0.9rem,2vw,24px)] text-black">husnainkhurshid360@gmail.com</span>
                         </div>
                         <div>
-                            <p className="text-[10px] font-semibold tracking-[0.2em] text-black/50 uppercase mb-1">Phone</p>
-                            <span className="text-[clamp(0.9rem,2vw,18px)] text-black">+92 308 80028</span>
+                            <p className="text-[20px] font-semibold tracking-[0.0em] text-black/50 uppercase mb-1">Phone</p>
+                            <span className="text-[clamp(0.9rem,2vw,24px)] text-black">+92 308 80028</span>
                         </div>
                     </div>
                 </div>
@@ -149,38 +145,24 @@ export default function Contact({ variant = "default" }: ContactProps) {
 
                     {/* ── BASE: dark rows (left) ── */}
                     <div className="flex-1 flex flex-col">
-                        {leftSocials.map((name) => (
+                        {leftSocials.map((item) => (
                             <a
-                                key={name}
-                                href="#"
+                                key={item.name}
+                                href={item.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="contact-gray-item flex items-center gap-3 py-1 cursor-pointer group"
                             >
                                 <ArrowIcon className="w-5 h-5 md:w-6 md:h-6 text-[#EB5939] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
                                 <span className={`reveal-text-light ${textSize} font-bold`}>
-                                    <span data-mask-size="0">{name}</span>
+                                    <span data-mask-size="0">{item.name}</span>
                                 </span>
                             </a>
                         ))}
                     </div>
 
-                    {/* ── BASE: dark rows (right) ── */}
+                    {/* ── BASE: dark rows (right — empty) ── */}
                     <div className="flex-1 flex flex-col">
-                        {rightSocials.map((name) => (
-                            <a
-                                key={name}
-                                href="#"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="contact-gray-item flex items-center gap-3 py-1 cursor-pointer group"
-                            >
-                                <ArrowIcon className="w-5 h-5 md:w-6 md:h-6 text-[#EB5939] flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-                                <span className={`reveal-text-light ${textSize} font-bold`}>
-                                    <span data-mask-size="0">{name}</span>
-                                </span>
-                            </a>
-                        ))}
                     </div>
 
                     {/* ── OVERLAY: orange mask-reveal (both columns) ── */}
@@ -188,9 +170,9 @@ export default function Contact({ variant = "default" }: ContactProps) {
 
                         {/* Left overlay */}
                         <div className="flex-1 flex flex-col">
-                            {leftSocials.map((name) => (
+                            {leftSocials.map((item) => (
                                 <div
-                                    key={name}
+                                    key={item.name}
                                     className="contact-mask-reveal bg-[#EB5939] flex items-center gap-3 py-1 pointer-events-auto flex-1"
                                     style={{
                                         maskImage: "linear-gradient(black,black)",
@@ -203,33 +185,14 @@ export default function Contact({ variant = "default" }: ContactProps) {
                                 >
                                     <ArrowIcon className="w-5 h-5 md:w-6 md:h-6 text-black flex-shrink-0" />
                                     <span className={`${textSize} font-bold text-black`}>
-                                        <span data-mask-size="0">{name}</span>
+                                        <span data-mask-size="0">{item.name}</span>
                                     </span>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Right overlay */}
+                        {/* Right overlay — empty */}
                         <div className="flex-1 flex flex-col">
-                            {rightSocials.map((name) => (
-                                <div
-                                    key={name}
-                                    className="contact-mask-reveal bg-[#EB5939] flex items-center gap-3 py-1 pointer-events-auto flex-1"
-                                    style={{
-                                        maskImage: "linear-gradient(black,black)",
-                                        WebkitMaskImage: "linear-gradient(black,black)",
-                                        maskRepeat: "no-repeat",
-                                        WebkitMaskRepeat: "no-repeat",
-                                        maskPosition: "center",
-                                        WebkitMaskPosition: "center",
-                                    }}
-                                >
-                                    <ArrowIcon className="w-5 h-5 md:w-6 md:h-6 text-black flex-shrink-0" />
-                                    <span className={`${textSize} font-bold text-black`}>
-                                        <span data-mask-size="0">{name}</span>
-                                    </span>
-                                </div>
-                            ))}
                         </div>
 
                     </div>
@@ -238,14 +201,14 @@ export default function Contact({ variant = "default" }: ContactProps) {
                 {/* ── CONTACT INFO ── */}
                 <div className="flex-none w-full md:w-[200px] flex flex-col justify-center gap-6 pl-0 md:pl-10">
                     <div>
-                        <p className="text-[10px] font-semibold tracking-[0.2em] text-[#5a5245] uppercase mb-1">Email</p>
-                        <a href="mailto:hello@husnain.dev" className="text-[clamp(0.9rem,2vw,18px)] text-[#b7ab98] hover:text-[#EB5939] transition-colors duration-300">
-                            hello@husnain.dev
+                        <p className="text-[20px] font-semibold tracking-[0.0em] text-[#5a5245] uppercase mb-1">Email</p>
+                        <a href="mailto:husnainkhurshid360@gmail.com" className="text-[clamp(0.9rem,2vw,24px)] text-[#b7ab98] hover:text-[#EB5939] transition-colors duration-300">
+                            husnainkhurshid360@gmail.com
                         </a>
                     </div>
                     <div>
-                        <p className="text-[10px] font-semibold tracking-[0.2em] text-[#5a5245] uppercase mb-1">Phone</p>
-                        <a href="tel:+923001234567" className="text-[clamp(0.9rem,2vw,18px)] text-[#b7ab98] hover:text-[#EB5939] transition-colors duration-300">
+                        <p className="text-[20px] font-semibold tracking-[0.0em] text-[#5a5245] uppercase mb-1">Phone</p>
+                        <a href="tel:+923001234567" className="text-[clamp(0.9rem,2vw,24px)] text-[#b7ab98] hover:text-[#EB5939] transition-colors duration-300">
                             +92 308 80028
                         </a>
                     </div>
