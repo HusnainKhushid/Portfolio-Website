@@ -14,12 +14,18 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
     const isMobile = useIsMobile();
     const videoSrc = isMobile ? "/Showreel-vertical.mp4" : "/Showreel-2025.mp4";
 
-    // --- Showreel Logic ---
+    // --- Showreel Click Logic ---
     const handleShowreelClick = async () => {
         const video = showreelVideoRef.current;
         if (!video) return;
 
         try {
+            // iOS Safari: use webkitEnterFullscreen on the video element itself
+            if ((video as any).webkitEnterFullscreen) {
+                (video as any).webkitEnterFullscreen();
+                return;
+            }
+            // Standard Fullscreen API
             if (!document.fullscreenElement) {
                 await video.requestFullscreen();
             } else {
@@ -28,7 +34,12 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
                 }
             }
         } catch (error) {
-            console.error('Error attempting to toggle fullscreen:', error);
+            // Fallback: just play/pause on tap if fullscreen fails
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
         }
     };
 
@@ -37,18 +48,15 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
             const video = showreelVideoRef.current;
             if (!video) return;
 
-            if (document.fullscreenElement) {
-                // In fullscreen: unmuted (sound on)
-                video.muted = false;
-            } else {
-                // Out of fullscreen: muted (no sound)
-                video.muted = true;
-            }
+            const isFS = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+            video.muted = !isFS;
         };
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
         };
     }, []);
 
@@ -103,7 +111,7 @@ export default function Showreel({ variant = "default" }: ShowreelProps) {
                     loop
                     muted
                     playsInline
-                    controls={false}
+                    controls={isMobile}
                     src={videoSrc}
                     style={{ pointerEvents: 'auto' }}
                     onClick={handleShowreelClick}

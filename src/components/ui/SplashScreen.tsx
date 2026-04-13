@@ -12,9 +12,9 @@ interface SplashScreenProps {
 
 // ─── Assets to preload ────────────────────────────────────────────────────────
 // Add any image/video URLs you want tracked in the loading bar here.
-// Keeping this minimal (only hero) ensures the page loads fast.
+// Keeping this minimal (only initial video) ensures the page loads fast.
 const PRELOAD_ASSETS = [
-    "/hero.mp4",
+    "/g3.mp4",
 ];
 
 /** Returns a promise that resolves once a URL has been partially fetched (headers received). */
