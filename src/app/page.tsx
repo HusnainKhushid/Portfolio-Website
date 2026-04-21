@@ -15,7 +15,6 @@ import Showreel from "../components/sections/Showreel";
 import Motto from "../components/sections/Motto";
 import Experience from "../components/sections/Experience";
 
-import GlobeScene from "../components/3d/GlobeScene";
 import Contact from "../components/sections/Contact";
 import SplashScreen from "../components/ui/SplashScreen";
 
@@ -172,38 +171,7 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* ======================================================= */}
-        {/* === LAYER 3 — Globe (above reveal, scrolls with page) = */}
-        {/* ======================================================= */}
-        {/* Uses the same section heights so the globe sits exactly */}
-        {/* over the Experience section in the stacking order.      */}
-        <div
-          className="absolute top-0 left-0 w-full pointer-events-none"
-          style={{ zIndex: 50 }}
-          aria-hidden="true"
-        >
-          {/* 
-                We have 4 sections before Experience: Hero, About, WhatIDo, Showreel
-                Hero: 100vh
-                About: min-h-[60vh] md:min-h-screen
-                WhatIDo: min-h-[60vh] md:min-h-screen
-                Showreel: min-h-[60vh] md:min-h-screen
-                They don't perfectly equal 400vh on mobile anymore.
-                But for testing "on top", we just put it inside a static place.
-                For now we just reuse the spacer layout:
-             */}
-          <div className="flex flex-col w-full opacity-0">
-            <div className="w-full h-screen" />
-            <div className="w-full min-h-[60vh] md:min-h-screen" />
-            <div className="w-full min-h-[60vh] md:min-h-screen" />
-            <div className="w-full min-h-[60vh] md:min-h-screen" />
-          </div>
 
-          {/* Globe canvas — same height as Experience section */}
-          <div className="w-full min-h-[60vh] md:min-h-screen absolute top-0 mt-[100vh]" style={{ transform: "translateY(calc(max(60vh, 100vh) * 3))" }}>
-            <GlobeScene />
-          </div>
-        </div>
       </div>
     </>
   );

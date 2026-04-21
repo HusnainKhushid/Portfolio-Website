@@ -2,7 +2,7 @@
 
 import React, { Suspense, useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, Environment } from "@react-three/drei";
+import { useGLTF, Environment, Float, Preload, Stage } from "@react-three/drei";
 import { Group } from "three";
 
 /* ── Globe mesh ────────────────────────────────────────────── */
@@ -11,17 +11,20 @@ const GlobeMesh: React.FC<{ scrollYRef: React.RefObject<number> }> = ({ scrollYR
     const groupRef = useRef<Group>(null);
     const { invalidate } = useThree();
 
-    useFrame((_, delta) => {
+    useFrame(() => {
         if (!groupRef.current) return;
         const sy = scrollYRef.current;
-        groupRef.current.rotation.y += delta * 0.15 + sy * 0.000005;
-        invalidate(); // request next frame (continuous rotation needs it)
+        // Direct link to scroll: mapping scroll pixels to rotation + 180 deg offset
+        groupRef.current.rotation.y = (sy * 0.001) + Math.PI;
+        invalidate();
     });
 
     return (
-        <group ref={groupRef} position={[0, 0, 0]} scale={0.032} dispose={null}>
-            <primitive object={scene} />
-        </group>
+        <Float speed={1.5} rotationIntensity={0.05} floatIntensity={0.15}>
+            <group ref={groupRef} dispose={null} scale={3.4}>
+                <primitive object={scene} />
+            </group>
+        </Float>
     );
 };
 
@@ -39,18 +42,20 @@ const GlobeScene: React.FC = () => {
     return (
         <Canvas
             className="w-full h-full"
-            camera={{ position: [0, 0, 5], fov: 45 }}
+            camera={{ position: [0, 0, 6], fov: 30 }}
             gl={{ alpha: true, antialias: true }}
             style={{ background: "transparent" }}
-            frameloop="demand"
         >
-            <ambientLight intensity={0.6} />
-            <directionalLight position={[5, 10, 5]} intensity={2.5} />
-            <pointLight position={[-5, -5, 5]} intensity={1} />
             <Suspense fallback={null}>
+                {/* Harsh, dramatic front light */}
+                <spotLight position={[0, 50, 20]} intensity={2.5} angle={0.15} penumbra={1} />
+                <pointLight position={[5, 10, 5]} intensity={1} />
+                <ambientLight intensity={1} />
+
+                <Environment preset="night" />
                 <GlobeMesh scrollYRef={scrollYRef} />
-                <Environment preset="city" />
             </Suspense>
+            <Preload all />
         </Canvas>
     );
 };

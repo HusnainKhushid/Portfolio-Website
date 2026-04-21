@@ -1,8 +1,11 @@
 "use client";
 
 import { useLayoutEffect, useRef, RefObject } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+const GlobeScene = dynamic(() => import("../3d/GlobeScene"), { ssr: false });
 
 interface ExperienceProps {
     variant?: "default" | "reveal";
@@ -43,7 +46,7 @@ function ExperienceContent({
 }) {
     return (
         /* One block: label directly above body, left-aligned, vertically centred */
-        <div className="flex-1 flex items-center w-full pl-[12.5%] pr-[5%]">
+        <div className="relative z-10 flex-1 flex items-center w-full pl-[12.5%] pr-[5%]">
             <div className="max-w-[75%]">
                 {/* Label — directly above body text */}
                 <p
@@ -115,6 +118,11 @@ export default function Experience({ variant = "default" }: ExperienceProps) {
     /* ── DEFAULT LAYER ─────────────────────────────────────── */
     return (
         <div className="w-full min-h-[60vh] md:min-h-screen flex flex-col bg-[#131313] relative overflow-hidden">
+            {/* Globe — sits above the bg, below the text */}
+            <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
+                <GlobeScene />
+            </div>
+
             <ExperienceContent
                 labelColor="#b7ab98"
                 textRef={textRef}
