@@ -56,7 +56,7 @@ export default function LottieAnimationPage() {
     autoplay: false,
     renderer: 'svg' as const,
     rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
+      preserveAspectRatio: 'xMidYMid meet',
       progressiveLoad: true,
       hideOnTransparent: true,
       className: 'lottie-svg'
@@ -73,7 +73,7 @@ export default function LottieAnimationPage() {
     autoplay: false,
     renderer: 'svg' as const,
     rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
+      preserveAspectRatio: 'xMidYMid meet',
       progressiveLoad: true,
       hideOnTransparent: true,
       className: 'lottie-svg-2'
